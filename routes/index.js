@@ -1,10 +1,9 @@
 const express = require("express");
 const indexRouter = express.Router();
-const path = require("path");
 
-indexRouter.get("/", (req, res) =>{
+indexRouter.get("/", (request, response) =>{
     console.log("Hola mundo");
-    res.status(200).render("hello")}
+    response.status(200).render("hello")}
 );
 
 module.exports= indexRouter;
