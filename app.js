@@ -10,7 +10,12 @@ const MySQLStore = mysqlSession(session);
 const app = express();
 const config = require("./config");
 
-/*const sessionStore = MySQLStore(config.mysqlConfig);
+const sessionStore = new MySQLStore({
+    host: "localhost",
+    user: "root",         
+    password: "",
+    database: "AW_24"    
+});
 
 const middlewareSession = session({
     saveUninitialized: false,
@@ -18,7 +23,7 @@ const middlewareSession = session({
     resave: false,
     store: sessionStore
 });
-app.use(middlewareSession);*/
+app.use(middlewareSession);
 
 const routerIndex = require('./routes/index');
 //const routerUsuarios= require("./routes/routerUsuarios");
