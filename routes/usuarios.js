@@ -14,7 +14,7 @@ userRouter.post("/login", (req,res,next) =>{
         rol: req.body.rol
     }
 
-    daoU.insertUser(user, function (error, usuario) {
+    daoU.insertUser(user, (error, usuario) => {
             if (error) {
                 console.log(error);
                 next();

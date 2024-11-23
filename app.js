@@ -41,11 +41,13 @@ app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json()); // support json encoded bodies
 
 app.use('/usuarios',routerUsuarios)
-//app.use('/eventos',routerEventos)
+app.use('/eventos',routerEventos)
 app.use('/',routerIndex)
+
 app.use(function(request,response,next){
     response.status(404).render("404");
 })
+
 app.use(function(error,request,response,next){
     console.error(error);
     response.status(500).render("500");
