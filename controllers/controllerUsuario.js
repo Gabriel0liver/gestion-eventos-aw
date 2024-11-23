@@ -8,6 +8,7 @@ const daoU = new userModel(pool);
 
 
 class userController {
+
     loginPost(request,response,next){
         daoU.isUserCorrect(request.body.correo, request.body.password,
             function (error, userCorrect) {
@@ -35,17 +36,15 @@ class userController {
         let user = {
             nombre: request.body.nombre,
             correo: request.body.correo,
-            contrasena: request.body.contrasena,
+            contrasena: request.body.telefono,
             facultad: request.body.facultad,
             rol: request.body.rol
         }
 
         daoU.insertUser(user, function (error, usuario) {
                 if (error) {
-                    response.status(500);
-                    response.render("register",
-                        { errorMsg: error.message });
-    
+                    console.log(error);
+                    next();
                 }
                 else {
                     request.session.currentUser = request.body.correo;
@@ -53,6 +52,10 @@ class userController {
     
                 }
             });
+    }
+
+    recuperarPost(request,response,next){
+
     }
 }
 

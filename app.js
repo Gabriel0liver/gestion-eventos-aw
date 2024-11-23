@@ -26,8 +26,8 @@ const middlewareSession = session({
 app.use(middlewareSession);
 
 const routerIndex = require('./routes/index');
-//const routerUsuarios= require("./routes/routerUsuarios");
-//const routerEventos= require("./routes/routerEventos");
+const routerUsuarios= require("./routes/usuarios");
+//const routerEventos= require("./routes/eventos");
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
@@ -40,7 +40,7 @@ app.set('views', path.join(__dirname, 'views'));
 app.use(bodyParser.urlencoded({ extended: false })); 
 app.use(bodyParser.json()); // support json encoded bodies
 
-//app.use('/usuarios',routerUsuarios)
+app.use('/usuarios',routerUsuarios)
 //app.use('/eventos',routerEventos)
 app.use('/',routerIndex)
 app.use(function(request,response,next){

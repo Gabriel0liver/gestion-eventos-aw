@@ -11,15 +11,15 @@
     <form action="/usuarios/register" method="POST">
         <div>
             <label for="nombreCompleto">Nombre Completo:</label>
-            <input type="text" id="nombreCompleto" name="nombreCompleto" required pattern="[A-Za-z\s]+" title="Solo se permiten letras y espacios">
+            <input type="text" id="nombre" name="nombre" required pattern="[A-Za-z\s]+" title="Solo se permiten letras y espacios">
         </div>
         <div>
             <label for="correoElectronico">Correo Electrónico Universitario:</label>
-            <input type="email" id="correoElectronico" name="correoElectronico" required pattern="^[a-zA-Z0-9._%+-]+@universidad\.edu$" title="Debe ser un correo electrónico válido de la universidad">
+            <input type="email" id="correo" name="correo" required pattern="^[a-zA-Z0-9._%+-]+@universidad\.edu$" title="Debe ser un correo electrónico válido de la universidad">
         </div>
         <div>
             <label for="telefonoContacto">Teléfono de Contacto:</label>
-            <input type="tel" id="telefonoContacto" name="telefonoContacto" pattern="^\+?\d{0,3}?\s?\d{10}$" title="Debe ser un número de teléfono válido">
+            <input type="tel" id="telefono" name="telefono" title="Debe ser un número de teléfono válido">
         </div>
         <div>
             <label for="facultad">Facultad:</label>
