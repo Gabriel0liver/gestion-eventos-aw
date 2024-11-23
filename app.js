@@ -8,7 +8,7 @@ const session = require("express-session");
 const mysqlSession = require("express-mysql-session");
 const MySQLStore = mysqlSession(session);
 const app = express();
-const config = require("./config");
+const config = require("./config/db");
 
 const sessionStore = new MySQLStore({
     host: "localhost",
@@ -27,7 +27,7 @@ app.use(middlewareSession);
 
 const routerIndex = require('./routes/index');
 const routerUsuarios= require("./routes/usuarios");
-//const routerEventos= require("./routes/eventos");
+const routerEventos= require("./routes/eventos");
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
@@ -38,7 +38,7 @@ app.set('views', path.join(__dirname, 'views'));
 
 
 app.use(bodyParser.urlencoded({ extended: false })); 
-app.use(bodyParser.json()); // support json encoded bodies
+app.use(bodyParser.json());
 
 app.use('/usuarios',routerUsuarios)
 app.use('/eventos',routerEventos)
