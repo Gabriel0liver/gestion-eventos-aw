@@ -1,12 +1,20 @@
 "use strict";
-module.exports = {
-   mysqlConfig: {
+
+const mysqlConfig = {
            host: "localhost",
            user: "root",         
            password: "",
-           database: "AW_24"    
-   }              
+           database: "aw_24"    
 }
+
+const facultades = [
+    "Informática",
+    "Derecho",
+    "Economía",
+    "Medicina",
+    "Arquitectura"
+];
+
 
 const mysql = require('mysql');
 
@@ -14,7 +22,7 @@ const db = mysql.createConnection({
     host: 'localhost',
     user: 'root',
     password: '',
-    database: 'AW_24',
+    database: 'aw_24',
 });
 
 db.connect((err) => {
@@ -25,4 +33,8 @@ db.connect((err) => {
     console.log('Conexión a la base de datos establecida.');
 });
 
-module.exports = db;
+module.exports = {
+    db,
+    mysqlConfig,
+    facultades
+};

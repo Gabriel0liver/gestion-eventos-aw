@@ -11,7 +11,7 @@ authMiddleware.requireAnon = (req, res, next) => {
 
 authMiddleware.requireUser = (req, res, next) => {
   if (!req.session.currentUser) {
-    return res.redirect('/auth/login');
+    return res.redirect('/login');
   }
   next();
 };

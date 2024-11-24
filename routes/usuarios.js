@@ -1,13 +1,10 @@
 "use strict";
-
 const UserDAO = require("../models/userDAO");
 const express = require("express");
 const userRouter = express.Router();
-const config = require("../config");
 const authMiddleware = require('../middleware/authMiddleware');
-const mysql = require('mysql');
 
-const daoU = new UserDAO(mysql.createPool(config.mysqlConfig));
+const daoU = new UserDAO();
 
 userRouter.post("/register", authMiddleware.requireAnon , authMiddleware.checkRegister ,(req,res,next) =>{
 

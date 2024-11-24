@@ -1,58 +1,49 @@
+"use strict";
 const express = require("express");
-const router = express.Router();
-const db = require("../config/db");
+const eventosRouter = express.Router();
+const EventosDAO = require("../models/eventosDAO");
+const authMiddleware = require('../middleware/authMiddleware');
 
-router.get("/", (req, res) => {
-    const sql = "SELECT * FROM eventos";
+const daoE = new EventosDAO();
 
-    db.query(sql, (err, resultados) => {
-        if (err) {
-            console.error(err);
-            return res.status(500).send("Error al obtener eventos");
+eventosRouter.get("/", authMiddleware.requireUser, (req, res) => {
+    daoE.getEventos((error, eventos) => {
+        if (error) {
+            next(error);
         }
-        res.render("eventos", { eventos: resultados });
+        res.render("eventos", { eventos });
     });
 });
 
-router.get("/crear", (req, res) => {
+eventosRouter.get("/crear", authMiddleware.requireUser, (req, res) => {
     res.render("formularioEvento");
 });
 
-router.post("/crear", (req, res) => {
+eventosRouter.post("/crear", authMiddleware.requireUser, (req, res) => {
     const { titulo, descripcion, fecha, hora, ubicacion, capacidad_maxima, tipo } = req.body;
 
-    //ID del organizador (harcodeado por ahora)
-    const id_organizador = 1;
+    const id_organizador = req.session.currentUser.id;
 
     //Verificar si el organizador es válido
-    const sqlVerificarOrganizador = "SELECT id FROM usuarios WHERE id = ? AND rol = 'organizador'";
-    db.query(sqlVerificarOrganizador, [id_organizador], (err, results) => {
-        if (err) {
-            console.error(err);
-            return res.status(500).send("Error en el servidor al verificar el organizador.");
-        }
-        if (results.length === 0) {
-            return res.status(400).send("Organizador no válido.");
-        }
-
-        // Insertar el evento
-        const sqlInsertEvento = `
-            INSERT INTO eventos (titulo, descripcion, fecha, ubicacion, capacidad_maxima, tipo, id_organizador)
-            VALUES (?, ?, ?, ?, ?, ?, ?)
-        `;
-        db.query(
-            sqlInsertEvento,
-            [titulo, descripcion, `${fecha} ${hora}`, ubicacion, capacidad_maxima, tipo, id_organizador],
-            (err, result) => {
-                if (err) {
-                    console.error(err);
+    daoE.verifyOrganizador(id_organizador, (error, esOrganizador) => {
+        if (error) {
+            console.error(error);
+            return res.status(500).send("Error al crear el evento.");
+        }   
+        if (!esOrganizador) {
+            return res.status(403).send("No tienes permisos para crear eventos.");
+        }else{
+            const evento = { titulo, descripcion, fecha, hora, ubicacion, capacidad_maxima, tipo, id_organizador };
+            daoE.insertEvento(evento, (error, evento) => {
+                if (error) {
+                    console.error(error);
                     return res.status(500).send("Error al crear el evento.");
                 }
-                res.status(200).send("Evento creado con éxito.");
-            }
-        );
+                res.redirect("/eventos");
+            });
+        }
     });
 });
 
 
-module.exports= router;
+module.exports= eventosRouter;

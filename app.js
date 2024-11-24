@@ -14,7 +14,7 @@ const sessionStore = new MySQLStore({
     host: "localhost",
     user: "root",         
     password: "",
-    database: "AW_24"    
+    database: "aw_24"    
 });
 
 const middlewareSession = session({
@@ -41,7 +41,7 @@ app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 
 app.use('/usuarios',routerUsuarios)
-//app.use('/eventos',routerEventos)
+app.use('/eventos',routerEventos)
 app.use('/',routerIndex)
 
 app.use(function(request,response,next){

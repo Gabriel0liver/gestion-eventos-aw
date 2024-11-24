@@ -117,6 +117,7 @@ CREATE TABLE `usuarios` (
   `id` int(11) NOT NULL,
   `nombre` varchar(255) NOT NULL,
   `correo` varchar(255) NOT NULL,
+  `contrasena` varchar(255) NOT NULL,
   `telefono` varchar(15) DEFAULT NULL,
   `facultad_id` int(11) NOT NULL,
   `rol` enum('organizador','asistente') NOT NULL
@@ -126,7 +127,7 @@ CREATE TABLE `usuarios` (
 -- Volcado de datos para la tabla `usuarios`
 --
 
-INSERT INTO `usuarios` (`id`, `nombre`, `correo`, `telefono`, `facultad_id`, `rol`) VALUES
+INSERT INTO `usuarios` (`id`, `nombre`, `correo`, `contrasena`,`telefono`, `facultad_id`, `rol`) VALUES
 (1, 'Manolo', 'manolo@manolo.manolo', '1111111111', 1, 'organizador');
 
 --
