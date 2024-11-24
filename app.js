@@ -3,12 +3,12 @@ const express = require('express');
 const path = require('path');
 const morgan = require("morgan");
 const bodyParser = require('body-parser');
-const mysql = require('mysql');
+
 const session = require("express-session");
 const mysqlSession = require("express-mysql-session");
 const MySQLStore = mysqlSession(session);
 const app = express();
-const config = require("./config");
+
 
 const sessionStore = new MySQLStore({
     host: "localhost",
@@ -41,7 +41,7 @@ app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json()); // support json encoded bodies
 
 app.use('/usuarios',routerUsuarios)
-app.use('/eventos',routerEventos)
+//app.use('/eventos',routerEventos)
 app.use('/',routerIndex)
 
 app.use(function(request,response,next){

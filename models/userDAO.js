@@ -1,31 +1,25 @@
 "use strict";
 
-const DB_CONNECTION_ERROR_MESSAGE = "Error en la conexión con la bd"
-const DB_ACCESS_ERROR_MESSAGE = "Error de acceso a la bd"
-
 class UserDAO {
+
     constructor(pool) {
         this.pool = pool
     }
 
     insertUser(user, callback){
-        console.log(user)
         this.pool.getConnection(function(e, c) {
-            if (e) callback(new Error(DB_CONNECTION_ERROR_MESSAGE))
-
+            if (e) callback(new Error(e));
             else {
-                c.query("SELECT Id FROM usuarios WHERE correo = ?", [user.correo],
-                function(e, rows) {
-                    if (e) callback(e)
+                c.query("SELECT Id FROM usuarios WHERE correo = ?", [user.correo], (e, rows) =>{
+                    if (e) callback(e);
                     else {
-                        if (rows != 0) callback(new Error("Ya existe este usuario"))
+                        if (rows != 0) callback(null, null);
                         else {
                             c.query("INSERT INTO usuarios (nombre, correo, contrasena, facultad, rol) values(?,?,?,?,?)",
-                            [user.nombre,user.correo,user.contrasena,user.facultad,user.rol], function(e, rows){
-                                console.log(rows)
+                            [user.nombre,user.correo,user.contrasena,user.facultad,user.rol], (e, rows) =>{
                                 c.release()
-                                if (e) console.log(e);
-                                else callback(null,true)
+                                if (e) callback(new Error(e));
+                                else callback(null,user);
                             });
                         }
                     }
@@ -33,6 +27,37 @@ class UserDAO {
             }
         })      
     }
+
+    getUser(user, callback){
+        this.pool.getConnection(function(e, c) {
+            if (e) callback(new Error(e));
+            else {
+                c.query("SELECT * FROM usuarios WHERE correo = ? AND contrasena = ?", [user.correo, user.contrasena],
+                function(e, rows) {
+                    if (e) callback(new Error(e));
+                    else {
+                        callback(null, rows[0])
+                    }
+                })
+            }
+        })      
+    }
+
+    updateUser(user, callback){
+        this.pool.getConnection(function(e, c) {
+            if (e) callback(new Error(e));
+            else {
+                c.query("UPDATE usuarios SET nombre = ?, correo = ?, contrasena = ?, facultad = ?, rol = ? WHERE Id = ?",
+                [user.nombre,user.correo,user.contrasena,user.facultad,user.rol,user.Id], (e, rows) =>{
+                    c.release()
+                    if (e) callback(new Error(e));
+                    else callback(null,user);
+                });
+            }
+        })      
+    }
+
+    
 }
 
 module.exports = UserDAO
