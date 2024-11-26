@@ -4,7 +4,7 @@ const mysqlConfig = {
            host: "localhost",
            user: "root",         
            password: "",
-           database: "aw_24"    
+           database: "AW_24"    
 }
 
 const facultades = [
@@ -22,7 +22,7 @@ const db = mysql.createConnection({
     host: 'localhost',
     user: 'root',
     password: '',
-    database: 'aw_24',
+    database: 'AW_24',
 });
 
 db.connect((err) => {

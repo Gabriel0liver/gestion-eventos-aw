@@ -2,10 +2,10 @@
 -- version 5.2.1
 -- https://www.phpmyadmin.net/
 --
--- Servidor: 127.0.0.1
--- Tiempo de generación: 23-11-2024 a las 20:45:20
--- Versión del servidor: 10.4.28-MariaDB
--- Versión de PHP: 8.2.4
+-- Servidor: localhost
+-- Tiempo de generación: 26-11-2024 a las 10:30:43
+-- Versión del servidor: 10.4.32-MariaDB
+-- Versión de PHP: 8.2.12
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 START TRANSACTION;
@@ -18,7 +18,7 @@ SET time_zone = "+00:00";
 /*!40101 SET NAMES utf8mb4 */;
 
 --
--- Base de datos: `aw_24`
+-- Base de datos: `AW_24`
 --
 
 -- --------------------------------------------------------
@@ -66,24 +66,6 @@ INSERT INTO `eventos` (`id`, `titulo`, `descripcion`, `fecha`, `hora`, `ubicacio
 -- --------------------------------------------------------
 
 --
--- Estructura de tabla para la tabla `facultades`
---
-
-CREATE TABLE `facultades` (
-  `id` int(11) NOT NULL,
-  `nombre` varchar(255) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
---
--- Volcado de datos para la tabla `facultades`
---
-
-INSERT INTO `facultades` (`id`, `nombre`) VALUES
-(1, 'Informática');
-
--- --------------------------------------------------------
-
---
 -- Estructura de tabla para la tabla `inscripciones`
 --
 
@@ -119,16 +101,9 @@ CREATE TABLE `usuarios` (
   `correo` varchar(255) NOT NULL,
   `contrasena` varchar(255) NOT NULL,
   `telefono` varchar(15) DEFAULT NULL,
-  `facultad_id` int(11) NOT NULL,
+  `facultad` varchar(255) NOT NULL,
   `rol` enum('organizador','asistente') NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
---
--- Volcado de datos para la tabla `usuarios`
---
-
-INSERT INTO `usuarios` (`id`, `nombre`, `correo`, `contrasena`,`telefono`, `facultad_id`, `rol`) VALUES
-(1, 'Manolo', 'manolo@manolo.manolo', '1111111111', 1, 'organizador');
 
 --
 -- Índices para tablas volcadas
@@ -144,37 +119,19 @@ ALTER TABLE `configuraciones_accesibilidad`
 -- Indices de la tabla `eventos`
 --
 ALTER TABLE `eventos`
-  ADD PRIMARY KEY (`id`),
-  ADD KEY `id_organizador` (`id_organizador`);
-
---
--- Indices de la tabla `facultades`
---
-ALTER TABLE `facultades`
-  ADD PRIMARY KEY (`id`),
-  ADD UNIQUE KEY `nombre` (`nombre`);
+  ADD PRIMARY KEY (`id`);
 
 --
 -- Indices de la tabla `inscripciones`
 --
 ALTER TABLE `inscripciones`
-  ADD PRIMARY KEY (`id`),
-  ADD KEY `id_usuario` (`id_usuario`),
-  ADD KEY `id_evento` (`id_evento`);
-
---
--- Indices de la tabla `sessions`
---
-ALTER TABLE `sessions`
-  ADD PRIMARY KEY (`session_id`);
+  ADD PRIMARY KEY (`id`);
 
 --
 -- Indices de la tabla `usuarios`
 --
 ALTER TABLE `usuarios`
-  ADD PRIMARY KEY (`id`),
-  ADD UNIQUE KEY `correo` (`correo`),
-  ADD KEY `facultad_id` (`facultad_id`);
+  ADD PRIMARY KEY (`id`);
 
 --
 -- AUTO_INCREMENT de las tablas volcadas
@@ -193,12 +150,6 @@ ALTER TABLE `eventos`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
 
 --
--- AUTO_INCREMENT de la tabla `facultades`
---
-ALTER TABLE `facultades`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
-
---
 -- AUTO_INCREMENT de la tabla `inscripciones`
 --
 ALTER TABLE `inscripciones`
@@ -208,30 +159,7 @@ ALTER TABLE `inscripciones`
 -- AUTO_INCREMENT de la tabla `usuarios`
 --
 ALTER TABLE `usuarios`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
-
---
--- Restricciones para tablas volcadas
---
-
---
--- Filtros para la tabla `eventos`
---
-ALTER TABLE `eventos`
-  ADD CONSTRAINT `eventos_ibfk_1` FOREIGN KEY (`id_organizador`) REFERENCES `usuarios` (`id`);
-
---
--- Filtros para la tabla `inscripciones`
---
-ALTER TABLE `inscripciones`
-  ADD CONSTRAINT `inscripciones_ibfk_1` FOREIGN KEY (`id_usuario`) REFERENCES `usuarios` (`id`),
-  ADD CONSTRAINT `inscripciones_ibfk_2` FOREIGN KEY (`id_evento`) REFERENCES `eventos` (`id`);
-
---
--- Filtros para la tabla `usuarios`
---
-ALTER TABLE `usuarios`
-  ADD CONSTRAINT `usuarios_ibfk_1` FOREIGN KEY (`facultad_id`) REFERENCES `facultades` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;

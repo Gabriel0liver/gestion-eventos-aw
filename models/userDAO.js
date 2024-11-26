@@ -12,7 +12,6 @@ class UserDAO {
                 else {
                     db.query("INSERT INTO usuarios (nombre, correo, contrasena, facultad, rol) values(?,?,?,?,?)",
                     [user.nombre,user.correo,user.contrasena,user.facultad,user.rol], (e, rows) =>{
-                        c.release()
                         if (e) callback(new Error(e));
                         else callback(null,user);
                     });
@@ -34,7 +33,6 @@ class UserDAO {
     updateUser(user, callback){
         db.query("UPDATE usuarios SET nombre = ?, correo = ?, contrasena = ?, facultad = ?, rol = ? WHERE Id = ?",
         [user.nombre,user.correo,user.contrasena,user.facultad,user.rol,user.Id], (e, rows) =>{
-            c.release()
             if (e) callback(new Error(e));
             else callback(null,user);
         });

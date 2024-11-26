@@ -3,6 +3,7 @@ const UserDAO = require("../models/userDAO");
 const express = require("express");
 const userRouter = express.Router();
 const authMiddleware = require('../middleware/authMiddleware');
+const facultades = require("../config/db").facultades;
 
 const daoU = new UserDAO();
 
@@ -29,7 +30,9 @@ userRouter.post("/register", authMiddleware.requireAnon , authMiddleware.checkRe
                 if(!usuario) {
                     res.status(200);
                     res.render("register",
-                        { errorMsg: "El usuario ya existe"});
+                        { errorMsg: "El usuario ya existe"
+                        ,facultades: facultades
+                        });
                 }else{
                     req.session.currentUser = usuario;
                     res.status(200).redirect("/usuarios/home");
@@ -45,7 +48,7 @@ userRouter.post("/login", authMiddleware.requireAnon, (req,res,next)=>{
             }
             if(usuario) {
                 req.session.currentUser = usuario;
-                res.redirect("/usuarios/home");
+                res.redirect("/usuarios/perfil");
             }
             else {
                 res.status(200);
@@ -63,9 +66,8 @@ userRouter.post("/logout", authMiddleware.requireUser,(req,res,next)=>{
 userRouter.post("/recuperar", authMiddleware.requireAnon ,(req,res,next)=>{
 });
 
-userRouter.get("/home", authMiddleware.requireUser, (req,res)=>{
-    console.log(req.session.currentUser);
-    res.render("home", {user: req.session.currentUser});
+userRouter.get("/perfil", authMiddleware.requireUser, (req,res)=>{
+    res.render("perfil", {user: req.session.currentUser});
 });
 
 module.exports= userRouter;
