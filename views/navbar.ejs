@@ -1,0 +1,34 @@
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+    <div class="container-fluid">
+        <a class="navbar-brand" href="/">Eventos</a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav ms-auto">
+                <% if (usuario) { %>
+                    <% if (usuario.rol === "organizador") { %>
+                        <li class="nav-item">
+                            <a class="nav-link" href="/eventos/crear">Crear Evento</a>
+                        </li>
+                    <% } %>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/usuarios/perfil">Perfil</a>
+                    </li>
+                    <li class="nav-item">
+                        <form action="/usuarios/logout" method="POST" style="display:inline;">
+                            <button class="btn btn-link nav-link" type="submit">Cerrar Sesión</button>
+                        </form>
+                    </li>
+                <% } else { %>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/usuarios/login">Iniciar Sesión</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/usuarios/register">Registrarse</a>
+                    </li>
+                <% } %>
+            </ul>
+        </div>
+    </div>
+</nav>

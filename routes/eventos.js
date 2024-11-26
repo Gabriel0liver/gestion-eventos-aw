@@ -24,7 +24,6 @@ eventosRouter.post("/crear", authMiddleware.requireUser, (req, res) => {
 
     const id_organizador = req.session.currentUser.id;
 
-    //Verificar si el organizador es válido
     daoE.verifyOrganizador(id_organizador, (error, esOrganizador) => {
         if (error) {
             console.error(error);
@@ -42,6 +41,33 @@ eventosRouter.post("/crear", authMiddleware.requireUser, (req, res) => {
                 res.redirect("/eventos");
             });
         }
+    });
+});
+
+eventosRouter.post("/inscribirse/:id", (req, res) => {
+    const eventoId = req.params.id;
+    const usuarioId = 1;
+
+    const sql = "INSERT INTO inscripciones (id_usuario, id_evento) VALUES (?, ?)";
+    db.query(sql, [usuarioId, eventoId], (err) => {
+        if (err) {
+            console.error(err);
+            return res.status(500).send("Error al inscribirse al evento.");
+        }
+        res.status(200).send("Inscripción realizada con éxito.");
+    });
+});
+
+eventosRouter.delete("/eliminar/:id", (req, res) => {
+    const eventoId = req.params.id;
+
+    const sql = "DELETE FROM eventos WHERE id = ?";
+    db.query(sql, [eventoId], (err) => {
+        if (err) {
+            console.error(err);
+            return res.status(500).send("Error al eliminar el evento.");
+        }
+        res.status(200).send("Evento eliminado con éxito.");
     });
 });
 
