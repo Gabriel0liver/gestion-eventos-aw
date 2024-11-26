@@ -1,0 +1,89 @@
+"use strict";
+
+const { db } = require("../config/db");
+
+class EventosDAO {
+
+    getEventos(callback){
+        db.query("SELECT * FROM eventos", function(e, rows) {
+            if (e) callback(new Error(e));
+            else {
+                callback(null, rows)
+            }
+        })
+    }
+
+    getEventosOrganizador(idOrganizador) {
+        return new Promise((resolve, reject) => {
+            const sql = "SELECT * FROM eventos WHERE id_organizador = ?";
+            db.query(sql, [idOrganizador], (err, result) => {
+                if (err) {
+                    return reject(err);
+                }
+                resolve(result);
+            });
+        });
+    }
+
+    getEventosUsuario(id_usuario, callback){
+        db.query("SELECT * FROM inscripciones WHERE id_evento = ? AND id_usuario = ?", [id_evento, id_usuario], function(e, rows) {
+            if (e) callback(new Error(e));
+            else {
+                callback(null, rows)
+            }
+        })
+    }
+
+    insertEvento(evento, callback){
+        db.query("INSERT INTO eventos (titulo, descripcion, fecha, hora, ubicacion, capacidad_maxima, tipo, id_organizador) values(?,?,?,?,?,?,?,?)",
+        [evento.titulo, evento.descripcion, evento.fecha, evento.hora, evento.ubicacion, evento.capacidad_maxima, evento.tipo, evento.id_organizador ], (e, rows) =>{
+            c.release()
+            if (e) callback(new Error(e));
+            else callback(null,evento);
+        });
+              
+    }
+
+    deleteEvento(evento, callback){
+        db.query("DELETE FROM eventos WHERE Id = ?", [evento.Id], (e, rows) =>{
+            c.release()
+            if (e) callback(new Error(e));
+            else callback(null,evento);
+        });    
+    }
+
+    getEventoById(id, callback) {
+        db.query("SELECT * FROM eventos WHERE id = ?", [id], function(e, rows) {
+            if (e) callback(new Error(e));
+            else {
+                callback(null, rows[0]);
+            }
+        });
+    }
+    
+    deleteEventoById(id, callback) {
+        db.query("DELETE FROM eventos WHERE id = ?", [id], (e) => {
+            if (e) callback(new Error(e));
+            else callback(null);
+        });
+    }
+
+    editarEvento(id, eventoData) {
+        return new Promise((resolve, reject) => {
+            const sql = `
+                UPDATE eventos 
+                SET titulo = ?, descripcion = ?, fecha = ?, hora = ?, ubicacion = ?, capacidad_maxima = ? 
+                WHERE id = ?`;
+            const { titulo, descripcion, fecha, hora, ubicacion, capacidad_maxima } = eventoData;
+            db.query(sql, [titulo, descripcion, fecha, hora, ubicacion, capacidad_maxima, id], (err, result) => {
+                if (err) {
+                    return reject(err);
+                }
+                resolve(result);
+            });
+        });
+    }
+    
+}
+
+module.exports = EventosDAO;

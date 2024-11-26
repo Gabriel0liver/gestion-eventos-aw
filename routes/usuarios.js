@@ -1,5 +1,5 @@
 "use strict";
-const UserDAO = require("../models/userDAO");
+const UserDAO = require("../integracion/userDAO");
 const express = require("express");
 const userRouter = express.Router();
 const authMiddleware = require('../middleware/authMiddleware');

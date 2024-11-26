@@ -2,7 +2,7 @@ const express = require("express");
 const indexRouter = express.Router();
 const authMiddleware = require('../middleware/authMiddleware');
 const facultades = require("../config/db").facultades;
-const EventosDAO = require("../models/eventosDAO");
+const EventosDAO = require("../integracion/eventosDAO");
 
 const daoE = new EventosDAO();
 

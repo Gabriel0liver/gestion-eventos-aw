@@ -1,7 +1,7 @@
 "use strict";
 const express = require("express");
 const eventosRouter = express.Router();
-const EventosDAO = require("../models/eventosDAO");
+const EventosDAO = require("../integracion/eventosDAO");
 const authMiddleware = require('../middleware/authMiddleware');
 
 const daoE = new EventosDAO();
@@ -14,6 +14,27 @@ eventosRouter.get("/", authMiddleware.requireUser, (req, res) => {
         res.render("eventos", { eventos });
     });
 });
+
+
+eventosRouter.get("/gestion_eventos", authMiddleware.requireUser, (req, res) => {
+    daoE.getEventos((error, eventos) => {
+        if (error) {
+            next(error);
+        }
+        res.render("gestion_eventos", { eventos });
+    });
+});
+
+eventosRouter.get('/mis-eventos', authMiddleware.requireUser, async (req, res) => {
+    try {
+        const eventos = await daoE.getEventosOrganizador(1);
+        res.json({ eventos });
+    } catch (error) {
+        console.error('Error al obtener eventos:', error);
+        res.status(500).json({ error: 'Error al obtener los eventos' });
+    }
+});
+
 
 eventosRouter.get("/crear", authMiddleware.requireUser, (req, res) => {
     res.render("formularioEvento");
@@ -69,6 +90,31 @@ eventosRouter.delete("/eliminar/:id", (req, res) => {
         }
         res.status(200).send("Evento eliminado con éxito.");
     });
+});
+
+eventosRouter.get('/detalle/:id', authMiddleware.requireUser, (req, res) => {
+    const eventoId = req.params.id;
+    daoE.getEventoById(eventoId, (error, evento) => {
+        if (error) {
+            console.error('Error al obtener el detalle del evento:', error);
+            return res.status(500).json({ error: 'Error al obtener el detalle del evento.' });
+        }
+        res.json({ evento });
+    });
+});
+
+//Editar un evento
+eventosRouter.put('/editar/:id', authMiddleware.requireUser, async (req, res) => {
+    const { id } = req.params;
+    const { titulo, descripcion, fecha, hora, ubicacion, capacidad_maxima } = req.body;
+
+    try {
+        await daoE.editarEvento(id, { titulo, descripcion, fecha, hora, ubicacion, capacidad_maxima });
+        res.json({ mensaje: 'Evento actualizado correctamente' });
+    } catch (error) {
+        console.error('Error al editar evento:', error);
+        res.status(500).json({ error: 'Error al editar el evento' });
+    }
 });
 
 
