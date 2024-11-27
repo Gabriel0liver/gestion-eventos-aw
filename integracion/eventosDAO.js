@@ -68,14 +68,14 @@ class EventosDAO {
         });
     }
 
-    editarEvento(id, eventoData) {
+    editarEvento(eventoData) {
+        console.log("AAAAAA");
         return new Promise((resolve, reject) => {
-            const sql = `
-                UPDATE eventos 
-                SET titulo = ?, descripcion = ?, fecha = ?, hora = ?, ubicacion = ?, capacidad_maxima = ? 
+            const sql = ` UPDATE eventos
+                SET titulo = ?, descripcion = ?, fecha = ?, hora = ?, ubicacion = ?, capacidad_maxima = ?, foto = ?
                 WHERE id = ?`;
-            const { titulo, descripcion, fecha, hora, ubicacion, capacidad_maxima } = eventoData;
-            db.query(sql, [titulo, descripcion, fecha, hora, ubicacion, capacidad_maxima, id], (err, result) => {
+            const { id, titulo, descripcion, fecha, hora, ubicacion, capacidad_maxima, foto } = eventoData;
+            db.query(sql, [titulo, descripcion, fecha, hora, ubicacion, capacidad_maxima, foto, id], (err, result) => {
                 if (err) {
                     return reject(err);
                 }
@@ -84,6 +84,22 @@ class EventosDAO {
         });
     }
     
+    
+    crearEvento(eventoData) {
+        return new Promise((resolve, reject) => {
+            const sql = `
+                INSERT INTO eventos (titulo, descripcion, fecha, hora, ubicacion, capacidad_maxima,id_organizador, foto)
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?)`;
+            const { titulo, descripcion, fecha, hora, ubicacion, capacidad_maxima,id_organizador, foto } = eventoData;
+            db.query(sql, [titulo, descripcion, fecha, hora, ubicacion, capacidad_maxima,id_organizador, foto], (err, result) => {
+                if (err) {
+                    return reject(err);
+                }
+                resolve(result);
+            });
+        });
+    }    
+
 }
 
 module.exports = EventosDAO;
