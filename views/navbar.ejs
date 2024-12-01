@@ -1,0 +1,54 @@
+<nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+    <div class="container-fluid">
+        <a class="navbar-brand" href="/">Gestión de Eventos</a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav ms-auto">
+                <% if (usuario) { %>
+                    <% if (usuario.rol === "organizador") { %>
+                        <li class="nav-item">
+                            <a class="nav-link" href="/eventos/gestion_eventos">Gestionar mis Eventos</a>
+                        </li>
+                    <% } else if (usuario.rol === "asistente") { %>
+                        <li class="nav-item">
+                            <a class="nav-link" href="/eventos/mis-inscripciones">Mis Inscripciones</a>
+                        </li>
+                    <% } %>
+
+                    <li class="nav-item">
+                        <a class="nav-link" href="/eventos">Ver Eventos</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/usuarios/perfil">Mi Perfil</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/usuarios/config_accesivilidad">Configuración Accesibilidad</a>
+                    </li>
+
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" id="navbarUser" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            <span><i class="bi bi-person-circle"></i> <%= usuario.nombre %></span>
+                        </a>
+                        <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarUser">
+                            <li class="dropdown-header">Rol: <strong><%= usuario.rol %></strong></li>
+                            <li>
+                                <form id="logoutForm" action="/usuarios/logout" method="POST">
+                                    <button class="dropdown-item text-danger" type="submit">Cerrar Sesión</button>
+                                </form>
+                            </li>
+                        </ul>
+                    </li>
+                <% } else { %>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/login">Iniciar Sesión</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/register">Registrarse</a>
+                    </li>
+                <% } %>
+            </ul>
+        </div>
+    </div>
+</nav>

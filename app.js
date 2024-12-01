@@ -10,6 +10,7 @@ const MySQLStore = mysqlSession(session);
 const app = express();
 const config = require("./config/db");
 
+
 const sessionStore = new MySQLStore({
     host: "localhost",
     user: "root",         
@@ -35,6 +36,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.use(morgan("dev"));
 app.set('view engine', 'ejs');
 app.set('views', path.join(__dirname, 'views'));
+app.use('/fotos', express.static(path.join(__dirname, 'fotos')));
 
 
 app.use(bodyParser.urlencoded({ extended: false })); 
