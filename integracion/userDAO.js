@@ -20,6 +20,16 @@ class UserDAO {
         })    
     }
 
+    recuperar(email, callback){
+        db.query("SELECT contrasena FROM usuarios WHERE correo = ?", [email], (e, rows) =>{
+            if (e) callback(e);
+            else {
+                if (rows != 0) callback(null, rows[0].contrasena);
+                else callback(null, null);
+            }
+        })
+    }
+
     getUser(user, callback){
         db.query("SELECT * FROM usuarios WHERE correo = ? AND contrasena = ?", [user.correo, user.contrasena],
         function(e, rows) {

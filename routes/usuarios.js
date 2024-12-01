@@ -4,8 +4,20 @@ const express = require("express");
 const userRouter = express.Router();
 const authMiddleware = require('../middleware/authMiddleware');
 const facultades = require("../config/db").facultades;
+const nodemailer = require('nodemailer');
 
 const daoU = new UserDAO();
+
+const transporter = nodemailer.createTransport({
+    service: "Gmail",
+    host: "smtp.gmail.com",
+    port: 465,
+    secure: true,
+    auth: {
+        user: 'gestioneventos92@gmail.com',
+        pass: 'pjbh gmta ugoz oius'
+    }
+});
 
 userRouter.post("/register", authMiddleware.requireAnon , authMiddleware.checkRegister ,(req,res,next) =>{
 
@@ -35,7 +47,7 @@ userRouter.post("/register", authMiddleware.requireAnon , authMiddleware.checkRe
                         });
                 }else{
                     req.session.currentUser = usuario;
-                    res.status(200).redirect("/usuarios/home");
+                    res.status(200).redirect("/");
                 }
             }
         });
@@ -64,6 +76,37 @@ userRouter.post("/logout", authMiddleware.requireUser,(req,res,next)=>{
 });
 
 userRouter.post("/recuperar", authMiddleware.requireAnon ,(req,res,next)=>{
+
+    const correo = req.body.correo;
+
+    daoU.recuperar(correo, (error, contrasena) => {
+            if (error) {
+                next(error);
+            }
+            if(contrasena) {
+                const mailOptions = {
+                    to: correo,
+                    from: 'gestioneventos92@gmail.com',
+                    subject: 'Recuperación de contraseña',
+                    text: `Has solicitado la recuperación de tu contraseña.\n
+                    La contraseña asociada a tu cuenta con correo ${correo} es: ${contrasena}\n`
+                };
+
+                transporter.sendMail(mailOptions, (err) => {
+                    if (err) {
+                        return next(err);
+                    }
+                    res.status(200).render("recuperar", {
+                        success: "Se ha enviado un correo con la contraseña"
+                    });
+                });
+            }
+            else {
+                res.status(200);
+                res.render("recuperar",
+                    { errorMsg: "El correo no existe"});
+            }
+        });
 });
 
 userRouter.get("/perfil", authMiddleware.requireUser, (req,res)=>{
