@@ -4,18 +4,31 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Recuperar Contraseña</title>
-    <link rel="stylesheet" href="/path/to/your/styles.css">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
 </head>
 <body>
-    <div class="container">
-        <h2>Recuperar Contraseña</h2>
-        <form action="/usuarios/recuperar" method="POST">
-            <div class="form-group">
-                <label for="email">Correo Electrónico:</label>
-                <input type="email" id="email" name="email" required>
+    <div class="container mt-5">
+        <div class="row justify-content-center">
+            <div class="col-md-6">
+                <div class="card">
+                    <div class="card-header">
+                        <h2>Recuperar Contraseña</h2>
+                    </div>
+                    <div class="card-body">
+                        <form action="/usuarios/recuperar" method="POST">
+                            <div class="form-group">
+                                <label for="email">Correo Electrónico:</label>
+                                <input type="email" id="email" name="email" class="form-control" required>
+                            </div>
+                            <button type="submit" class="btn btn-primary btn-block">Enviar</button>
+                        </form>
+                    </div>
+                </div>
             </div>
-            <button type="submit">Enviar</button>
-        </form>
+        </div>
     </div>
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 </body>
 </html>
