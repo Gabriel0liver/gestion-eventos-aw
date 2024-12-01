@@ -23,9 +23,17 @@ class EventosDAO {
     }
 
     getEventosUsuario(id_usuario, callback){
-        db.query("SELECT * FROM inscripciones WHERE id_evento = ? AND id_usuario = ?", [id_evento, id_usuario], function(e, rows) {
+        db.query("SELECT * FROM inscripciones id_usuario = ?", [ id_usuario], function(e, rows) {
             if (e) callback(new Error(e));
             else {
+                for (let i = 0; i < rows.length; i++) {
+                    db.query("SELECT * FROM eventos WHERE Id = ?", [rows[i].id_evento], function(e, evento) {
+                        if (e) callback(new Error(e));
+                        else {
+                            rows[i] = evento[0];
+                        }
+                    })
+                }
                 callback(null, rows)
             }
         })
