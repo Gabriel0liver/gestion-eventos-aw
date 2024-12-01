@@ -25,7 +25,7 @@ eventosRouter.get("/", authMiddleware.requireUser, (req, res) => {
         if (error) {
             next(error);
         }
-        res.render("eventos", { eventos });
+        res.render("eventos", { eventos,  usuario: req.session.currentUser});
     });
 });
 
@@ -35,7 +35,7 @@ eventosRouter.get("/gestion_eventos", authMiddleware.requireUser, (req, res) => 
         if (error) {
             next(error);
         }
-        res.render("gestion_eventos", { eventos });
+        res.render("gestion_eventos", { eventos , usuario: req.session.currentUser});
     });
 });
 
@@ -51,7 +51,7 @@ eventosRouter.get('/mis-eventos', authMiddleware.requireUser, async (req, res) =
 
 
 eventosRouter.get("/crear", authMiddleware.requireUser, (req, res) => {
-    res.render("formularioEvento");
+    res.render("formularioEvento", { usuario: req.session.currentUser});
 });
 
 eventosRouter.post("/crear", authMiddleware.requireUser, (req, res) => {
