@@ -58,10 +58,25 @@ CREATE TABLE `eventos` (
 --
 
 INSERT INTO `eventos` (`id`, `titulo`, `descripcion`, `fecha`, `hora`, `ubicacion`, `capacidad_maxima`, `tipo`, `id_organizador`) VALUES
-(6, 'a', 'a', '2024-11-29', '00:00:00', '11:11', 1, 'seminario', 1),
-(7, 'a', 'a', '2024-11-29', '00:00:00', 'Informática', 111111111, 'seminario', 1),
-(8, 'bbbb', 'bbbb', '2024-11-29', '00:00:00', 'Facultad Ciencias de la Información', 10000, 'taller', 1),
-(9, 'ccc', 'ccc', '2024-11-20', '00:00:00', 'Campus FDI', 123123, 'seminario', 1);
+(1, 'Taller de Programación', 'Aprende a programar en Python desde cero.', '2024-12-02', '14:00:00', 'Sala de Computación', 30, 'taller', 1),
+(2, 'Conferencia de IA', 'Explorando el futuro de la inteligencia artificial.', '2024-12-03', '09:00:00', 'Centro de Convenciones', 200, 'conferencia', 1),
+(3, 'Seminario de Marketing', 'Estrategias de marketing digital para el 2024.', '2024-12-04', '11:00:00', 'Sala de Conferencias A', 50, 'seminario', 1),
+(4, 'Taller de Fotografía', 'Mejora tus habilidades fotográficas con expertos.', '2024-12-05', '15:00:00', 'Estudio de Fotografía', 20, 'taller', 1),
+(5, 'Conferencia de Salud', 'Innovaciones en el cuidado de la salud.', '2024-12-06', '13:00:00', 'Auditorio de Medicina', 150, 'conferencia', 1),
+(6, 'Seminario de Finanzas', 'Gestión financiera personal y empresarial.', '2024-12-07', '10:00:00', 'Sala de Conferencias B', 60, 'seminario', 2),
+(7, 'Taller de Cocina', 'Cocina gourmet para principiantes.', '2024-12-08', '16:00:00', 'Cocina del Campus', 25, 'taller', 2),
+(8, 'Conferencia de Educación', 'Nuevas metodologías en la educación.', '2024-12-09', '09:30:00', 'Centro Educativo', 120, 'conferencia', 1),
+(9, 'Seminario de Derecho', 'Actualizaciones en leyes y regulaciones.', '2024-12-10', '11:30:00', 'Sala de Derecho', 80, 'seminario', 2),
+(10, 'Taller de Música', 'Técnicas avanzadas de composición musical.', '2024-12-11', '14:30:00', 'Estudio de Música', 15, 'taller', 1),
+(11, 'Conferencia de Medio Ambiente', 'Soluciones sostenibles para el futuro.', '2024-12-12', '10:00:00', 'Auditorio Verde', 180, 'conferencia', 1),
+(12, 'Seminario de Historia', 'Explorando eventos históricos clave.', '2024-12-13', '13:00:00', 'Sala de Historia', 70, 'seminario', 1),
+(13, 'Taller de Arte', 'Técnicas de pintura y escultura.', '2024-12-14', '15:00:00', 'Estudio de Arte', 20, 'taller', 1),
+(14, 'Conferencia de Negocios', 'Innovaciones en el mundo empresarial.', '2024-12-15', '09:00:00', 'Centro de Negocios', 250, 'conferencia', 2),
+(15, 'Seminario de Psicología', 'Nuevas investigaciones en psicología.', '2024-12-16', '11:00:00', 'Sala de Psicología', 90, 'seminario', 2),
+(16, 'Taller de Jardinería', 'Cultivo y cuidado de plantas.', '2024-12-17', '14:00:00', 'Jardín Botánico', 30, 'taller', 2),
+(17, 'Conferencia de Tecnología', 'Avances en tecnología de la información.', '2024-12-18', '10:30:00', 'Auditorio de Tecnología', 200, 'conferencia', 2),
+(18, 'Seminario de Literatura', 'Análisis de obras literarias clásicas.', '2024-12-19', '13:30:00', 'Sala de Literatura', 50, 'seminario', 2),
+(19, 'Taller de Diseño Gráfico', 'Herramientas y técnicas de diseño.', '2024-12-20', '15:30:00', 'Laboratorio de Diseño', 25, 'taller', 2);
 
 -- --------------------------------------------------------
 
@@ -104,6 +119,15 @@ CREATE TABLE `usuarios` (
   `facultad` varchar(255) NOT NULL,
   `rol` enum('organizador','asistente') NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Volcado de datos para la tabla `usuarios`
+--
+
+
+INSERT INTO `usuarios` (`id`, `nombre`, `correo`, `contrasena`, `telefono`, `facultad`, `rol`) VALUES
+(1, 'Juan Pérez', 'juan.perez@example.com', '1234', '123456789', 'Informática', 'organizador'),
+(2, 'María López', 'maria.lopez@example.com', '1234', '987654321', 'Economía', 'organizador');
 
 --
 -- Índices para tablas volcadas
