@@ -16,17 +16,17 @@
                             <a class="nav-link" href="/eventos/mis-inscripciones">Mis Inscripciones</a>
                         </li>
                     <% } %>
-                <% } %>
                 <li class="nav-item">
                     <a class="nav-link" href="/eventos">Ver Eventos</a>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link" href="/usuarios/perfil">Mi Perfil</a>
                 </li>
+                <% } %> 
+                <li class="nav-item">
+                    <button class="nav-link" data-bs-toggle="modal" data-bs-target="#accesibilidadModal">Accesibilidad</button>
+                </li>
                 <% if (usuario) { %>
-                    <li class="nav-item">
-                        <button class="nav-link" data-bs-toggle="modal" data-bs-target="#accesibilidadModal">Accesibilidad</button>
-                    </li>
                     <li class="nav-item dropdown">
                         <a class="nav-link dropdown-toggle" href="#" id="navbarUser" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                             <span><i class="bi bi-person-circle"></i> <%= usuario.nombre %></span>

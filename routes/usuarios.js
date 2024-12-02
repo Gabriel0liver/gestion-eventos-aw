@@ -54,7 +54,7 @@ userRouter.post("/register", authMiddleware.requireAnon, authMiddleware.checkReg
                     if (error) {
                         next(error);
                     }else{
-                        user.Id = usuarioId;
+                        user.id = usuarioId;
                         req.session.currentUser = user;
                         res.status(200).redirect("/");
                     }
@@ -71,7 +71,7 @@ userRouter.post("/login", authMiddleware.requireAnon, (req, res, next) => {
         }
         if (usuario) {
             req.session.currentUser = usuario;
-            res.redirect("/usuarios/perfil");
+            res.redirect("/");
         }
         else {
             res.status(200);

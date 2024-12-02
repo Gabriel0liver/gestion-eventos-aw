@@ -6,8 +6,13 @@ const authMiddleware = require('../middleware/authMiddleware');
 
 const daoA = new AccessibilityDAO();
 
-accesibilidadRouter.get("/", authMiddleware.requireUser, (req, res, next) => {
-    daoA.getConfiguracion(req.session.currentUser.Id, (error, configuracion) => {
+accesibilidadRouter.get("/", (req, res, next) => {
+    if(!req.session.currentUser){
+        return res.status(200).json({
+            configuracion: null
+        });
+    }
+    daoA.getConfiguracion(req.session.currentUser.id, (error, configuracion) => {
         if (error) {
             next(error);
         } else {
@@ -20,7 +25,7 @@ accesibilidadRouter.get("/", authMiddleware.requireUser, (req, res, next) => {
 
 accesibilidadRouter.put("/editar", authMiddleware.requireUser, (req, res, next) => {
     let configuracion = {
-        id_usuario: req.session.currentUser.Id,
+        id_usuario: req.session.currentUser.id,
         paleta_colores: req.body.paleta_colores,
         tamano_fuente: req.body.tamano_fuente
     }

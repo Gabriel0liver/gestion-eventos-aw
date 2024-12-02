@@ -2,45 +2,50 @@ const pequeno = "0.75em";
 const mediano = "1em";
 const grande = "1.3em";
 
+let loggedIn = false;
+
 fetch('/accesibilidad', {
     method: 'GET'
 }).then(response => response.json())
 .then(data => {
     const configuracion = data.configuracion;
-    if (configuracion.paleta_colores) {
-        switch(configuracion.paleta_colores) {
-            case 'daltonismo':
-                document.body.classList.add('daltonismo');
-                document.getElementById('paletaColores').value = 'daltonismo';
-                break;
-            case 'alto_contraste':
-                document.body.classList.add('alto-contraste');
-                document.getElementById('paletaColores').value = 'alto-contraste';
-                break;
-            case 'default':
-                document.getElementById('paletaColores').value = 'default';
-                break;
+    if (configuracion) {
+        loggedIn = true;
+        if (configuracion.paleta_colores) {
+            switch(configuracion.paleta_colores) {
+                case 'daltonismo':
+                    document.body.classList.add('daltonismo');
+                    document.getElementById('paletaColores').value = 'daltonismo';
+                    break;
+                case 'alto_contraste':
+                    document.body.classList.add('alto-contraste');
+                    document.getElementById('paletaColores').value = 'alto-contraste';
+                    break;
+                case 'default':
+                    document.getElementById('paletaColores').value = 'default';
+                    break;
+            }
         }
-    }
-    if (configuracion.tamano_fuente) {
-        switch(configuracion.tamano_fuente){
-            case 'pequeno':
-                document.documentElement.style.fontSize = pequeno; // Ajustar tamaño de texto
-                document.getElementById('tamanoFuente').value = 'pequeno';
-                break;
-            case 'mediano':
-                document.documentElement.style.fontSize = mediano; // Ajustar tamaño de texto
-                document.getElementById('tamanoFuente').value = 'mediano';
-                break;
-            case 'grande':
-                document.documentElement.style.fontSize = grande; // Ajustar tamaño de texto
-                document.getElementById('tamanoFuente').value = 'grande';
-                break;
+        if (configuracion.tamano_fuente) {
+            switch(configuracion.tamano_fuente){
+                case 'pequeno':
+                    document.documentElement.style.fontSize = pequeno; // Ajustar tamaño de texto
+                    document.getElementById('tamanoFuente').value = 'pequeno';
+                    break;
+                case 'mediano':
+                    document.documentElement.style.fontSize = mediano; // Ajustar tamaño de texto
+                    document.getElementById('tamanoFuente').value = 'mediano';
+                    break;
+                case 'grande':
+                    document.documentElement.style.fontSize = grande; // Ajustar tamaño de texto
+                    document.getElementById('tamanoFuente').value = 'grande';
+                    break;
+            }
+            
         }
-        
-    }
-    if (configuracion.navegacion_teclado) {
-        activarNavegacionPorTeclado(); // Activar funciones de teclado
+        if (configuracion.navegacion_teclado) {
+            activarNavegacionPorTeclado(); // Activar funciones de teclado
+        }
     }
 })
 .catch(err => console.error('Error al cargar configuraciones:', err));
@@ -67,34 +72,39 @@ function cambiarPaletaColores(paleta) {
 }
 
 function guardarConfiguracion() {
-    const tamanoFuente = document.getElementById('tamanoFuente').value;
-    const paletaColores = document.getElementById('paletaColores').value;
+    if(!loggedIn){
+        alert('Debe iniciar sesión para guardar la configuración');
+    }else{
+        const tamanoFuente = document.getElementById('tamanoFuente').value;
+        const paletaColores = document.getElementById('paletaColores').value;
 
-    const configuracion = {
-        tamano_fuente: tamanoFuente,
-        paleta_colores: paletaColores
-    };
+        const configuracion = {
+            tamano_fuente: tamanoFuente,
+            paleta_colores: paletaColores
+        };
 
-    if(paletaColores === 'alto-contraste') {
-        configuracion.paleta_colores = 'alto_contraste';
+        if(paletaColores === 'alto-contraste') {
+            configuracion.paleta_colores = 'alto_contraste';
+        }
+
+        console.log(configuracion);
+
+        fetch('/accesibilidad/editar', {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(configuracion)
+        }).then(response => {
+            if (response.ok) {
+                alert('Configuración guardada');
+            } else {
+                alert('Error al guardar configuración');
+            }
+        }).catch(error => {
+            console.error('Error:', error);
+            alert('Error al guardar configuración');
+        });
     }
     
-    console.log(configuracion)
-
-    fetch('/accesibilidad/editar', {
-        method: 'PUT',
-        headers: {
-            'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(configuracion)
-    }).then(response => {
-        if (response.ok) {
-            alert('Configuración guardada');
-        } else {
-            alert('Error al guardar configuración');
-        }
-    }).catch(error => {
-        console.error('Error:', error);
-        alert('Error al guardar configuración');
-    });
 }
