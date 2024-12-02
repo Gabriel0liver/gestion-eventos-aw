@@ -4,7 +4,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Eventos Actuales</title>
-
     
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css">
     <link rel="stylesheet" href="./css/index.css">
@@ -15,51 +14,84 @@
     
     <%- include('./navbar', { usuario: usuario }) %>
    
-    <div class="container mt-4">
+    <div class="container mt-5 pt-5">
         <h1 class="text-center mb-4">Eventos</h1>
-        <div class="row">
-            <% eventos.forEach(evento => { %>
-                <div class="col-md-4 mb-3">
-                    <div class="card">
-                        <!-- Imagen del evento -->
-                        <img src="<%= evento.foto ? '/fotos/' + evento.foto : '/fotos/default.jpg' %>" class="card-img-top" alt="Imagen del evento">
-                        <div class="card-body">
-                            <h5 class="card-title"><%= evento.titulo %></h5>
-                            <p class="card-text"><%= evento.descripcion %></p>
-                            <p><strong>Fecha:</strong> <%= evento.fecha %></p>
-                            <p><strong>Ubicación:</strong> <%= evento.ubicacion %></p>
-                            <% if (usuario) { %>
-                                <button class="btn btn-success btn-inscribirse" data-id="<%= evento.id %>">Inscribirse</button>
-                                <!--TODO si el usuario esta inscrito que se muestre el botón de desinscribirse e información acerca de la lista de espera o estado-->
-                            <% } else { %>
-                                <p class="text-muted">Inicia sesión para interactuar</p>
-                            <% } %>
-                        </div>
-                    </div>
+        
+        <!-- Formulario de búsqueda y filtros -->
+        <form id="searchForm" class="mb-4">
+            <div class="row gy-3">
+                <div class="col-md-3">
+                    <input type="text" id="searchQuery" class="form-control" placeholder="Título del evento...">
                 </div>
-            <% }); %>
+                <div class="col-md-2">
+                    <input type="date" id="filterDate" class="form-control" placeholder="Fecha">
+                </div>
+                <div class="col-md-2">
+                    <input type="text" id="filterLocation" class="form-control" placeholder="Ubicación">
+                </div>
+                <div class="col-md-2">
+                    <select id="filterCapacityType" class="form-select">
+                        <option value="greater">Mayor que</option>
+                        <option value="less">Menor que</option>
+                    </select>
+                </div>
+                <div class="col-md-2">
+                    <input type="number" id="filterCapacity" class="form-control" placeholder="Capacidad">
+                </div>
+                <div class="col-md-2">
+                    <select id="filterEventType" class="form-select">
+                        <option value="">Tipo de evento</option>
+                        <option value="taller">Taller</option>
+                        <option value="seminario">Seminario</option>
+                        <option value="conferencia">Conferencia</option>
+                    </select>
+                </div>
+                <div class="col-md-1">
+                    <button type="submit" class="btn btn-primary btn-block">Buscar</button>
+                </div>
+            </div>
+        </form>
+
+        <div class="row eventos">
+            <%- include('./partials/eventos', { eventos }) %>
         </div>
     </div>
 
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
     <script>
         $(document).ready(function () {
-            $(".btn-inscribirse").on("click", function () {
-                const eventoId = $(this).data("id");
+            $("#searchForm").on("submit", function (e) {
+                e.preventDefault();
+                const query = $("#searchQuery").val();
+                const date = $("#filterDate").val();
+                const location = $("#filterLocation").val();
+                const capacityType = $("#filterCapacityType").val();
+                const capacity = $("#filterCapacity").val();
+                const eventType = $("#filterEventType").val();
+
                 $.ajax({
-                    url: `/eventos/inscribirse/${eventoId}`,
-                    type: "POST",
+                    url: "/eventos",
+                    type: "GET",
+                    data: {
+                        query: query,
+                        date: date,
+                        location: location,
+                        capacityType: capacityType,
+                        capacity: capacity,
+                        eventType: eventType
+                    },
                     success: function (response) {
-                        alert("Te has inscrito con éxito");
+                        // Actualizar la lista de eventos con los resultados de la búsqueda
+                        console.log(response);
+                        $(".eventos").html(response);
                     },
                     error: function () {
-                        alert("Error al inscribirse al evento");
+                        alert("Error al buscar eventos");
                     }
                 });
             });
         });
-        //TODO: funciones de eliminar inscripción y mostrar información de inscripción
-        
     </script>
-    
 </body>
 </html>

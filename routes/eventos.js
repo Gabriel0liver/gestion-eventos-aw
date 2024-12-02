@@ -20,16 +20,17 @@ const fotos = multer({ storage: storage });
 
 const daoE = new EventosDAO();
 
-/* POR ELIMINAR
+
 eventosRouter.get("/", authMiddleware.requireUser, (req, res, next) => {
-    daoE.getEventos((error, eventos) => {
+    const { query, date, location, capacityType, capacity, eventType } = req.query;
+
+    daoE.buscarEventos(query, date, location, capacityType, capacity, eventType, (error, eventos) => {
         if (error) {
-            next(error);
+            return next(error);
         }
-        res.render("eventos", { eventos,  usuario: req.session.currentUser});
+        res.render('partials/eventos', { eventos: eventos, usuario: req.session.currentUser });
     });
 });
-*/
 
 eventosRouter.get("/gestion_eventos", authMiddleware.requireUser, authMiddleware.esOrganizador, (req, res, next) => {
     daoE.getEventos((error, eventos) => {

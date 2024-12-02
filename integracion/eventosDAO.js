@@ -98,8 +98,45 @@ class EventosDAO {
                 resolve(result);
             });
         });
-    }    
+    }
+    
+    
+    buscarEventos(query, date, location, capacityType, capacity, eventType, callback) {
+        let sql = 'SELECT * FROM eventos WHERE 1=1';
+        const params = [];
 
+        if (query) {
+            sql += ' AND titulo LIKE ?';
+            params.push(`%${query}%`);
+        }
+        if (date) {
+            sql += ' AND fecha = ?';
+            params.push(date);
+        }
+        if (location) {
+            sql += ' AND ubicacion LIKE ?';
+            params.push(`%${location}%`);
+        }
+        if (capacity) {
+            if (capacityType === 'greater') {
+                sql += ' AND capacidad_maxima >= ?';
+            } else {
+                sql += ' AND capacidad_maxima <= ?';
+            }
+            params.push(capacity);
+        }
+        if (eventType) {
+            sql += ' AND tipo = ?';
+            params.push(eventType);
+        }
+
+        db.query(sql, params, (err, rows) => {
+            if (err) {
+                return callback(err);
+            }
+            callback(null, rows);
+        });
+    }
 }
 
 module.exports = EventosDAO;

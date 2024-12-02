@@ -1,0 +1,21 @@
+<% eventos.forEach(evento => { %>
+    <div class="col-md-4 mb-3">
+        <div class="card">
+            <!-- Imagen del evento -->
+            <img src="<%= evento.foto ? '/fotos/' + evento.foto : '/fotos/default.jpg' %>" class="card-img-top" alt="Imagen del evento">
+            <div class="card-body">
+                <h5 class="card-title"><%= evento.titulo %></h5>
+                <p class="card-text"><%= evento.descripcion %></p>
+                <p><strong>Fecha:</strong> <%= evento.fecha %></p>
+                <p><strong>Ubicación:</strong> <%= evento.ubicacion %></p>
+                <p><strong>Tipo:</strong> <%= evento.tipo %></p>
+                <% if (usuario) { %>
+                    <button class="btn btn-success btn-inscribirse" data-id="<%= evento.id %>">Inscribirse</button>
+                    <!--TODO si el usuario esta inscrito que se muestre el botón de desinscribirse e información acerca de la lista de espera o estado-->
+                <% } else { %>
+                    <p class="text-muted">Inicia sesión para interactuar</p>
+                <% } %>
+            </div>
+        </div>
+    </div>
+<% }); %>
