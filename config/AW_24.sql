@@ -28,7 +28,7 @@ SET time_zone = "+00:00";
 --
 
 CREATE TABLE `configuraciones_accesibilidad` (
-  `id` int(11) NOT NULL,
+  `id_usuario` int(11) NOT NULL,
   `paleta_colores` enum('alto_contraste','daltonismo','default') DEFAULT 'default',
   `tamano_fuente` enum('pequeno','mediano','grande') DEFAULT 'mediano',
   `nav_teclado` tinyint(1) DEFAULT 0,
@@ -113,7 +113,7 @@ CREATE TABLE `usuarios` (
 -- Indices de la tabla `configuraciones_accesibilidad`
 --
 ALTER TABLE `configuraciones_accesibilidad`
-  ADD PRIMARY KEY (`id`);
+  ADD PRIMARY KEY (`id_usuario`);
 
 --
 -- Indices de la tabla `eventos`
@@ -137,11 +137,6 @@ ALTER TABLE `usuarios`
 -- AUTO_INCREMENT de las tablas volcadas
 --
 
---
--- AUTO_INCREMENT de la tabla `configuraciones_accesibilidad`
---
-ALTER TABLE `configuraciones_accesibilidad`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT de la tabla `eventos`

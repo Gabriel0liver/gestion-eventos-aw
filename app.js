@@ -29,6 +29,7 @@ app.use(middlewareSession);
 const routerIndex = require('./routes/index');
 const routerUsuarios= require("./routes/usuarios");
 const routerEventos= require("./routes/eventos");
+const routerAccesibilidad= require("./routes/accesibilidad");
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
@@ -44,6 +45,7 @@ app.use(bodyParser.json());
 
 app.use('/usuarios',routerUsuarios)
 app.use('/eventos',routerEventos)
+app.use('/accesibilidad',routerAccesibilidad)
 app.use('/',routerIndex)
 
 app.use(function(request,response,next){

@@ -18,3 +18,52 @@
     object-fit: cover;
 }
 
+/* Estilos para el modo daltonismo */
+body.daltonismo {
+    filter: grayscale(100%);
+}
+
+body.daltonismo .card {
+    border-color: #000;
+}
+
+body.daltonismo .btn {
+    background-color: #000;
+    color: #fff;
+}
+
+body.daltonismo .btn-inscribirse {
+    background-color: #000;
+    color: #fff;
+}
+
+/* Estilos para el modo alto contraste */
+body.alto-contraste {
+    background-color: #000;
+    color: #fff;
+}
+
+body.alto-contraste .card {
+    background-color: #000;
+    border-color: #fff;
+    color: #fff;
+}
+
+body.alto-contraste .btn {
+    background-color: #fff;
+    color: #000;
+}
+
+body.alto-contraste .btn-inscribirse {
+    background-color: #fff;
+    color: #000;
+}
+
+body.alto-contraste a {
+    color: #00f;
+}
+
+body.alto-contraste .navbar {
+    background-color: #000;
+    border-color: #fff;
+}
