@@ -22,7 +22,7 @@ accesibilidadRouter.put("/editar", authMiddleware.requireUser, (req, res, next) 
     let configuracion = {
         id_usuario: req.session.currentUser.Id,
         paleta_colores: req.body.paleta_colores,
-        tamano_letra: req.body.tamano_fuente
+        tamano_fuente: req.body.tamano_fuente
     }
 
     daoA.editarConfiguracion(configuracion, (error, configuracion) => {
