@@ -20,6 +20,7 @@ const fotos = multer({ storage: storage });
 
 const daoE = new EventosDAO();
 
+/* POR ELIMINAR
 eventosRouter.get("/", authMiddleware.requireUser, (req, res, next) => {
     daoE.getEventos((error, eventos) => {
         if (error) {
@@ -28,9 +29,9 @@ eventosRouter.get("/", authMiddleware.requireUser, (req, res, next) => {
         res.render("eventos", { eventos,  usuario: req.session.currentUser});
     });
 });
+*/
 
-
-eventosRouter.get("/gestion_eventos", authMiddleware.requireUser, (req, res, next) => {
+eventosRouter.get("/gestion_eventos", authMiddleware.requireUser, authMiddleware.esOrganizador, (req, res, next) => {
     daoE.getEventos((error, eventos) => {
         if (error) {
             next(error);
@@ -39,7 +40,7 @@ eventosRouter.get("/gestion_eventos", authMiddleware.requireUser, (req, res, nex
     });
 });
 
-eventosRouter.get('/mis-eventos', authMiddleware.requireUser, async (req, res, next) => {
+eventosRouter.get('/mis-eventos', authMiddleware.requireUser, authMiddleware.esAsistente, async (req, res, next) => {
     try {
         const eventos = await daoE.getEventosOrganizador(1);
         res.json({ eventos });
@@ -48,10 +49,11 @@ eventosRouter.get('/mis-eventos', authMiddleware.requireUser, async (req, res, n
     }
 });
 
-
+/* POR ELIMINAR
 eventosRouter.get("/crear", authMiddleware.requireUser, (req, res, next) => {
     res.render("formularioEvento", { usuario: req.session.currentUser});
 });
+
 
 eventosRouter.post("/crear", authMiddleware.requireUser, (req, res) => {
     const { titulo, descripcion, fecha, hora, ubicacion, capacidad_maxima, tipo } = req.body;
@@ -76,8 +78,9 @@ eventosRouter.post("/crear", authMiddleware.requireUser, (req, res) => {
         }
     });
 });
+*/
 
-eventosRouter.post("/inscribirse/:id", (req, res, next) => {
+eventosRouter.post("/inscribirse/:id", authMiddleware.requireUser, (req, res, next) => {
     const eventoId = req.params.id;
     const usuarioId = 1;
 
@@ -90,7 +93,7 @@ eventosRouter.post("/inscribirse/:id", (req, res, next) => {
     });
 });
 
-eventosRouter.delete("/eliminar/:id", (req, res, next) => {
+eventosRouter.delete("/eliminar/:id", authMiddleware.requireUser, authMiddleware.esOrganizador, (req, res, next) => {
     const eventoId = req.params.id;
     daoE.deleteEventoById(eventoId, (error) => {
         if (error) {
@@ -112,7 +115,7 @@ eventosRouter.get('/detalle/:id', authMiddleware.requireUser, (req, res, next) =
 });
 
 //Editar evento
-eventosRouter.post('/editar/:id', authMiddleware.requireUser, fotos.single('foto'), async (req, res, next) => {
+eventosRouter.post('/editar/:id', authMiddleware.requireUser, authMiddleware.esOrganizador, fotos.single('foto'), async (req, res, next) => {
     console.log("DDDDDD");
     const { id } = req.params;
     const { titulo, descripcion, fecha, hora, ubicacion, capacidad_maxima } = req.body;
@@ -130,7 +133,7 @@ eventosRouter.post('/editar/:id', authMiddleware.requireUser, fotos.single('foto
 
 
 //Añadir un evento
-eventosRouter.post('/anyadir', authMiddleware.requireUser, fotos.single('foto'), async (req, res) => {
+eventosRouter.post('/anyadir', authMiddleware.requireUser, authMiddleware.esOrganizador, fotos.single('foto'), async (req, res) => {
     const { titulo, descripcion, fecha, hora, ubicacion, capacidad_maxima } = req.body;
     const foto = req.file ? req.file.filename : null;
     const id_organizador = req.session.currentUser.id;

@@ -16,6 +16,20 @@ authMiddleware.requireUser = (req, res, next) => {
   next();
 };
 
+authMiddleware.esAsistente = (req, res, next) => {
+    if(req.session.currentUser.rol !== 'asistente'){
+        return res.redirect('/');
+    }
+    next();
+}
+
+authMiddleware.esOrganizador = (req, res, next) => {
+    if(req.session.currentUser.rol !== 'organizador'){
+        return res.redirect('/');
+    }
+    next();
+}
+
 authMiddleware.checkRegister = (req, res, next) => {
     if(!req.body.nombre || !req.body.correo || !req.body.contrasena){
         res.status(200);
