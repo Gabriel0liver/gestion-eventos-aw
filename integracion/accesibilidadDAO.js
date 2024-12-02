@@ -27,8 +27,8 @@ class AccessibilityDAO {
     }
 
     editarConfiguracion(configuracion, callback){
-        db.query("UPDATE configuraciones_accesibilidad SET paleta_colores = ?, tamano_letra = ? WHERE id_usuario = ?",
-        [configuracion.paleta_colores, configuracion.tamano_letra, configuracion.id_usuario], (e, rows) =>{
+        db.query("UPDATE configuraciones_accesibilidad SET paleta_colores = ?, tamano_fuente = ? WHERE id_usuario = ?",
+        [configuracion.paleta_colores, configuracion.tamano_fuente, configuracion.id_usuario], (e, rows) =>{
             if (e) callback(new Error(e));
             else callback(null,configuracion);
         });
