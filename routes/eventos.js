@@ -29,12 +29,37 @@ function validarTipoEvento(tipo) {
 
 eventosRouter.get("/", authMiddleware.requireUser, (req, res, next) => {
     const { query, date, location, capacityType, capacity, eventType } = req.query;
+    const usuarioId = req.session.currentUser.id;
 
     daoE.buscarEventos(query, date, location, capacityType, capacity, eventType, (error, eventos) => {
         if (error) {
             return next(error);
         }
-        res.render("partials/eventos", { eventos: eventos, usuario: req.session.currentUser });
+
+        //Verificar la inscripción de eventos
+        const eventosConInscripcion = eventos.map(evento => {
+            return new Promise((resolve, reject) => {
+                //Verificar la inscripción de  usuario
+                daoI.getInscripcion(usuarioId, evento.id, (err, inscripcion) => {
+                    if (err) {
+                        reject(err);
+                    }
+                    evento.inscrito = inscripcion ? true : false;
+                    if (evento.inscrito) {
+                        evento.estado = inscripcion.estado;
+                    }
+                    resolve(evento);
+                });
+            });
+        });
+
+        Promise.all(eventosConInscripcion)
+            .then(eventosFinales => {               
+                res.render("partials/eventos", { eventos: eventosFinales, usuario: req.session.currentUser });
+            })
+            .catch(err => {
+                next(err);
+            });
     });
 });
 
@@ -157,7 +182,7 @@ eventosRouter.post("/anyadir", fotos.single("foto"), async (req, res, next) => {
 
 //Inscribirse
 eventosRouter.post('/inscribir', authMiddleware.requireUser, (req, res, next) => {
-    const { eventoId  } = req.body;
+    const { eventoId } = req.body;
     const usuarioId = req.session.currentUser.id;
 
     // Verificar si el usuario ya está inscrito
@@ -169,12 +194,30 @@ eventosRouter.post('/inscribir', authMiddleware.requireUser, (req, res, next) =>
             return res.status(400).json({ error: 'Ya estás inscrito en este evento' });
         }
 
-        // Realizar la inscripción
-        daoI.inscribirUsuario(usuarioId, eventoId, (err, inscripcion) => {
+        daoE.getEventoById(eventoId, (err, evento) => {
             if (err) {
                 next(err);
             }
-            res.json(inscripcion);
+            daoI.getInscripccionesPorEvento(eventoId, (err, inscripciones) => {
+                if (err) {
+                    next(err);
+                }
+                if (inscripciones.length >= evento.capacidad_maxima) {
+                    daoI.esperaUsuario(usuarioId, eventoId, (err, inscripcion) => {
+                        if (err) {
+                            next(err);
+                        }
+                        res.json(inscripcion);
+                    });
+                    return;
+                }
+                daoI.inscribirUsuario(usuarioId, eventoId, (err, inscripcion) => {
+                    if (err) {
+                        next(err);
+                    }
+                    res.json(inscripcion);
+                });
+            } );
         });
     });
 });

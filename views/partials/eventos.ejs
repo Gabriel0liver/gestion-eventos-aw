@@ -12,7 +12,11 @@
                 
                 <% if (usuario) { %>
                     <% if (evento.inscrito) { %>
-                        <p class="text-success">Ya estás inscrito en este evento.</p>
+                        <% if (evento.estado == "inscrito") { %>
+                            <p class="text-success">Inscrito en este evento.</p>
+                        <% } else { %>
+                            <p class="text-danger">Estás en lista de espera.</p>
+                        <% } %>
                         <button class="btn btn-danger btn-desinscribirse" data-id="<%= evento.id %>" data-usuario="<%= usuario.id %>">Desinscribirse</button>
                     <% } else { %>
                         <button class="btn btn-success btn-inscribirse" data-id="<%= evento.id %>" data-usuario="<%= usuario.id %>">Inscribirse</button>

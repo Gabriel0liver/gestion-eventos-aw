@@ -26,7 +26,10 @@ indexRouter.get("/", authMiddleware.requireUser, (req, res, next) => {
                     if (err) {
                         reject(err);
                     }
-                    evento.inscrito = inscripcion ? true : false; 
+                    evento.inscrito = inscripcion ? true : false;
+                    if (evento.inscrito) {
+                        evento.estado = inscripcion.estado;
+                    }
                     resolve(evento);
                 });
             });

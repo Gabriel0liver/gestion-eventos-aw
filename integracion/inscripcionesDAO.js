@@ -16,10 +16,32 @@ class InscripcionesDAO {
         });
     }
 
+    getInscripccionesPorEvento(eventoId, callback) {
+        const sql = 'SELECT * FROM inscripciones WHERE id_evento = ?';
+        db.query(sql, [eventoId], (err, rows) => {
+            if (err) {
+                console.error('Error en la consulta de inscripción:', err); 
+                return callback(err, null);
+            }
+            callback(null, rows);
+        });
+    }
+
 
     // Inscribir a un usuario en un evento
     inscribirUsuario(usuarioId, eventoId, callback) {
         const sql = 'INSERT INTO inscripciones (id_usuario, id_evento, estado, fecha_inscripcion) VALUES (?, ?, "inscrito", NOW())';
+        db.query(sql, [usuarioId, eventoId], (err, result) => {
+            if (err) {
+                return callback(err, null);
+            }
+            callback(null, { id_usuario: usuarioId, id_evento: eventoId, estado: 'inscrito' });
+        });
+    }
+
+    // Inscribir a un usuario en un evento
+    esperaUsuario(usuarioId, eventoId, callback) {
+        const sql = 'INSERT INTO inscripciones (id_usuario, id_evento, estado, fecha_inscripcion) VALUES (?, ?, "lista_espera", NOW())';
         db.query(sql, [usuarioId, eventoId], (err, result) => {
             if (err) {
                 return callback(err, null);
