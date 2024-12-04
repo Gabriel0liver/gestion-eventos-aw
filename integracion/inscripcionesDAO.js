@@ -16,6 +16,7 @@ class InscripcionesDAO {
         });
     }
 
+    // Obtener inscripciones por evento
     getInscripccionesPorEvento(eventoId, callback) {
         const sql = 'SELECT * FROM inscripciones WHERE id_evento = ?';
         db.query(sql, [eventoId], (err, rows) => {
@@ -72,6 +73,7 @@ class InscripcionesDAO {
         });
     }
 
+    //Obtener el historial de las inscripciones de un usuario
     getHistorialEventosUsuario(usuarioId, callback) {
         const sql = `
             SELECT e.titulo, e.fecha, i.estado
@@ -89,6 +91,8 @@ class InscripcionesDAO {
         });
     }
 
+
+    //Obtener las inscripciones de un evento
     getInscripcionesPorEvento(eventoId, callback) {
         const sql = 'SELECT i.id, i.id_usuario, i.estado, u.nombre FROM inscripciones i JOIN usuarios u ON i.id_usuario = u.id WHERE i.id_evento = ?';
         db.query(sql, [eventoId], (err, rows) => {
@@ -100,6 +104,7 @@ class InscripcionesDAO {
         });
     }
 
+    //Asciende una inscripción de lista de espera a inscrito
     ascenderInscripcion(inscripcionId, callback) {
         const sql = 'UPDATE inscripciones SET estado = "inscrito" WHERE id = ?';
         db.query(sql, [inscripcionId], (err, result) => {
@@ -111,6 +116,7 @@ class InscripcionesDAO {
         });
     }
 
+    //Eliminar una inscripción
     eliminarInscripcion(inscripcionId, callback) {
         const sql = 'DELETE FROM inscripciones WHERE id = ?';
         db.query(sql, [inscripcionId], (err, result) => {
@@ -122,6 +128,7 @@ class InscripcionesDAO {
         });
     }
 
+    //Obtener el evento de una inscripción
     getEvento(inscripcionId, callback) {
         const sql = 'SELECT e.* FROM inscripciones i JOIN eventos e ON i.id_evento = e.id WHERE i.id = ?';
         db.query(sql, [inscripcionId], (err, rows) => {
@@ -133,6 +140,7 @@ class InscripcionesDAO {
         });
     }
 
+    //Obtener las inscripciones activas de un evento
     getInscripcionesActivasPorEvento(eventoId, callback) {
         const sql = 'SELECT * FROM inscripciones WHERE id_evento = ? AND estado = "inscrito"';
         db.query(sql, [eventoId], (err, rows) => {

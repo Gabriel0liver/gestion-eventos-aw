@@ -33,6 +33,8 @@ notificacionesRouter.get('/', authMiddleware.requireUser, (req, res) => {
                     return procesarAscensoListaEspera(info, fecha, leida, id);
                 case 'DESINSCRIPCION_EVENTO':
                     return procesarDesinscripcion(info, fecha, leida, id);
+                case 'EN_LISTA_ESPERA':
+                    return procesarListaDeEspera(info, fecha, leida, id);
                     
                     default:
                     return {
@@ -50,7 +52,7 @@ function procesarDesinscripcion(info, fecha, leida, id) {
     //TODO
     return {
         tipo: 'CANCELACION_EVENTO',
-        mensaje: `Te has desinscrito del evento con ID ${info}.`,
+        mensaje: `Te has desinscrito del evento ${info}.`,
         fecha,
         leida,
         id,
@@ -61,7 +63,7 @@ function procesarAscensoListaEspera(info, fecha, leida, id) {
     //TODO
     return {
         tipo: 'CANCELACION_EVENTO',
-        mensaje: `Has sido ascendido en la lista de espera del evento con ID ${info}.`,
+        mensaje: `Has sido ascendido en la lista de espera del evento ${info}.`,
         fecha,
         leida,
         id,
@@ -72,7 +74,7 @@ function procesarExplusionInscripcion(info, fecha, leida, id) {
     //TODO
     return {
         tipo: 'CANCELACION_EVENTO',
-        mensaje: `Has sido expulsado del evento con ID ${info}.`,
+        mensaje: `Has sido expulsado del evento ${info}.`,
         fecha,
         leida,
         id,
@@ -83,7 +85,7 @@ function procesarCancelacionEvento(info, fecha, leida, id) {
     //TODO
     return {
         tipo: 'CANCELACION_EVENTO',
-        mensaje: `El evento con ID ${info} ha sido cancelado.`,
+        mensaje: `El evento ${info} ha sido cancelado.`,
         fecha,
         leida,
         id,
@@ -94,7 +96,7 @@ function procesarRecordatorioEvento(info, fecha, leida, id) {
     //TODO
     return {
         tipo: 'RECORDATORIO_EVENTO',
-        mensaje: `Recordatorio: tienes un evento próximo con ID ${info}.`,
+        mensaje: `Recordatorio: tienes un evento próximo ${info}.`,
         fecha,
         leida,
         leida,
@@ -106,7 +108,7 @@ function procesarActualizacionInscripcion(info, fecha, leida, id) {
     //TODO
     return {
         tipo: 'ACTUALIZACION_INSCRIPCION',
-        mensaje: `Tu inscripción para el evento con ID ${info} ha sido actualizada.`,
+        mensaje: `Tu inscripción para el evento ${info} ha sido actualizada.`,
         fecha,
         leida,
         id,
@@ -117,7 +119,18 @@ function procesarConfirmacionInscripcion(info, fecha, leida, id) {
     //TODO
     return {
         tipo: 'CONFIRMACION_INSCRIPCION',
-        mensaje: `Has sido inscrito exitosamente en el evento con ID ${info}.`,
+        mensaje: `Has sido inscrito exitosamente en el evento ${info}.`,
+        fecha,
+        leida,
+        id,
+    };
+}
+
+function procesarListaDeEspera(info, fecha, leida, id) {
+    //TODO
+    return {
+        tipo: 'EN_LISTA_ESPERA',
+        mensaje: `Has sido puesto en lista de espera para el evento ${info}.`,
         fecha,
         leida,
         id,

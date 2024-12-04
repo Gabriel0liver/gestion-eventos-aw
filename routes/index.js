@@ -8,7 +8,7 @@ const InscripcionesDAO = require("../integracion/inscripcionesDAO");
 const daoE = new EventosDAO();
 const daoI = new InscripcionesDAO();
 
-//Cutrez luego lo cambio
+//Pagina principal de la web
 indexRouter.get("/", authMiddleware.requireUser, (req, res, next) => {
     const usuario = req.session.currentUser;
     const usuarioId = usuario.id;
@@ -26,6 +26,7 @@ indexRouter.get("/", authMiddleware.requireUser, (req, res, next) => {
                     if (err) {
                         reject(err);
                     }
+                    //Marcar estado de inscripción del usuario
                     evento.inscrito = inscripcion ? true : false;
                     if (evento.inscrito) {
                         evento.estado = inscripcion.estado;
@@ -35,6 +36,7 @@ indexRouter.get("/", authMiddleware.requireUser, (req, res, next) => {
             });
         });
 
+        //Renderizar la página principal despues de marcar las inscripciones
         Promise.all(eventosConInscripcion)
             .then(eventosFinales => {               
                 res.render("index", { eventos: eventosFinales, usuario });
@@ -45,14 +47,17 @@ indexRouter.get("/", authMiddleware.requireUser, (req, res, next) => {
     });
 });
 
+//Pagina de login
 indexRouter.get("/login", authMiddleware.requireAnon, (request, response) =>{
     response.status(200).render("login")}
 );
 
+//Pagina de registro
 indexRouter.get("/register", authMiddleware.requireAnon, (request, response) =>{
     response.status(200).render("register",{facultades})}
 );
 
+//Pagina de recuperar contraseña
 indexRouter.get("/recuperar", authMiddleware.requireAnon, (request, response) =>{
     response.status(200).render("recuperar")}
 );

@@ -4,6 +4,7 @@ const { db } = require("../config/db");
 
 class AccessibilityDAO {
 
+    //crear configuracion de accesibilidad al registrar usuario
     crearConfiguracion(id_usuario, callback){
 
         const paleta_colores = "default";
@@ -16,6 +17,7 @@ class AccessibilityDAO {
         });
     }
 
+    //obtener configuracion de accesibilidad de un usuario
     getConfiguracion(id_usuario, callback){
         db.query("SELECT * FROM configuraciones_accesibilidad WHERE id_usuario = ?", [id_usuario], (e, rows) =>{
             if (e) callback(new Error(e));
@@ -26,6 +28,7 @@ class AccessibilityDAO {
         })
     }
 
+    //editar configuracion de accesibilidad de un usuario
     editarConfiguracion(configuracion, callback){
         db.query("UPDATE configuraciones_accesibilidad SET paleta_colores = ?, tamano_fuente = ? WHERE id_usuario = ?",
         [configuracion.paleta_colores, configuracion.tamano_fuente, configuracion.id_usuario], (e, rows) =>{

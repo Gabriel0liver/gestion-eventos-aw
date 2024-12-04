@@ -4,6 +4,7 @@ const grande = "1.3em";
 
 let loggedIn = false;
 
+//pillar configuraciones de accesibilidad del usuario
 fetch('/accesibilidad', {
     method: 'GET'
 }).then(response => response.json())
@@ -51,6 +52,7 @@ fetch('/accesibilidad', {
 })
 .catch(err => console.error('Error al cargar configuraciones:', err));
 
+//carga dinamica de configuraciones al cambiar valor de los select
 document.addEventListener('DOMContentLoaded', function() {
     document.getElementById('tamanoFuente').addEventListener('change', function() {
         cambiarTamanoFuente(this.value);
@@ -72,6 +74,7 @@ function cambiarPaletaColores(paleta) {
     }
 }
 
+//guardar configuraciones de accesibilidad en base de datos
 function guardarConfiguracion() {
     if(!loggedIn){
         alert('Debe iniciar sesión para guardar la configuración');

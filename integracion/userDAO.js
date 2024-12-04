@@ -4,6 +4,7 @@ const { db } = require("../config/db");
 
 class UserDAO {
 
+    //Registra un usuario en la base de datos
     insertUser(user, callback){
         db.query("SELECT Id FROM usuarios WHERE correo = ?", [user.correo], (e, rows) =>{
             if (e) callback(e);
@@ -20,6 +21,7 @@ class UserDAO {
         })    
     }
 
+    //Retorna la contraseña de un usuario para recuperarla
     recuperar(email, callback){
         db.query("SELECT contrasena FROM usuarios WHERE correo = ?", [email], (e, rows) =>{
             if (e) callback(e);
@@ -30,6 +32,7 @@ class UserDAO {
         })
     }
 
+    //Para verificar si un usuario existe
     getUser(user, callback){
         db.query("SELECT * FROM usuarios WHERE correo = ? AND contrasena = ?", [user.correo, user.contrasena],
         function(e, rows) {
@@ -40,6 +43,7 @@ class UserDAO {
         })  
     }
 
+    //Edita informacion de un usuario
     updateUser(user, callback){
         db.query("UPDATE usuarios SET nombre = ?, correo = ?, contrasena = ?, facultad = ?, rol = ? WHERE Id = ?",
         [user.nombre,user.correo,user.contrasena,user.facultad,user.rol,user.Id], (e, rows) =>{
@@ -48,7 +52,7 @@ class UserDAO {
         });
     }
 
-
+    //Verifica si el usuario es un organizador
     verifyOrganizador(id_organizador, callback){
         db.query("SELECT id FROM usuarios WHERE id = ? AND rol = 'organizador'", [id_organizador], (e, rows) =>{
             if (e) callback(new Error(e));

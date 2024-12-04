@@ -32,6 +32,7 @@ function validarTipoEvento(tipo) {
     return tiposValidos.includes(tipo);
 }
 
+//Ruta para la búsqueda y renericado paricial de eventos
 eventosRouter.get("/", authMiddleware.requireUser, (req, res, next) => {
     const { query, date, location, capacityType, capacity, eventType } = req.query;
     const usuarioId = req.session.currentUser.id;
@@ -49,6 +50,7 @@ eventosRouter.get("/", authMiddleware.requireUser, (req, res, next) => {
                     if (err) {
                         reject(err);
                     }
+                    //Marcar el evento con el estado de usuario apropiado
                     evento.inscrito = inscripcion ? true : false;
                     if (evento.inscrito) {
                         evento.estado = inscripcion.estado;
@@ -59,7 +61,8 @@ eventosRouter.get("/", authMiddleware.requireUser, (req, res, next) => {
         });
 
         Promise.all(eventosConInscripcion)
-            .then(eventosFinales => {               
+            .then(eventosFinales => {        
+                //Renderizar la vista parcial de eventos       
                 res.render("partials/eventos", { eventos: eventosFinales, usuario: req.session.currentUser });
             })
             .catch(err => {
@@ -68,6 +71,7 @@ eventosRouter.get("/", authMiddleware.requireUser, (req, res, next) => {
     });
 });
 
+//Ruta para la gestion de eventos del organizador
 eventosRouter.get("/gestion_eventos", authMiddleware.requireUser, authMiddleware.esOrganizador, (req, res, next) => {
     daoE.getEventos((error, eventos) => {
         if (error) {
@@ -77,6 +81,7 @@ eventosRouter.get("/gestion_eventos", authMiddleware.requireUser, authMiddleware
     });
 });
 
+//Ruta de los eventos inscritos de un usuario
 eventosRouter.get('/mis-eventos', authMiddleware.requireUser, (req, res, next) => {
 
     daoE.getEventosOrganizador(req.session.currentUser.id, (error, eventos) => {
@@ -88,6 +93,7 @@ eventosRouter.get('/mis-eventos', authMiddleware.requireUser, (req, res, next) =
     });
 });
 
+//Ruta para eliminar un evento
 eventosRouter.delete("/eliminar/:id", authMiddleware.requireUser, authMiddleware.esOrganizador, (req, res, next) => {
     const eventoId = req.params.id;
     const id_usuario = req.session.currentUser.id;
@@ -96,6 +102,7 @@ eventosRouter.delete("/eliminar/:id", authMiddleware.requireUser, authMiddleware
             return next(err);
         }
 
+        //notificar a los usuarios inscritos que el evento ha sido cancelado
         inscripciones.forEach(inscripcion => {
             const usuarioId = inscripcion.id_usuario;
             const tipo = "CANCELACION_EVENTO";
@@ -118,6 +125,7 @@ eventosRouter.delete("/eliminar/:id", authMiddleware.requireUser, authMiddleware
     });
 });
 
+//Ruta para obtener el detalle de un evento
 eventosRouter.get('/detalle/:id', authMiddleware.requireUser, (req, res, next) => {
     const eventoId = req.params.id;
     daoE.getEventoById(eventoId, (error, evento) => {
@@ -154,6 +162,7 @@ eventosRouter.post("/anyadir", fotos.single("foto"), async (req, res, next) => {
     const id_organizador = req.session.currentUser.id;
     const foto = req.file ? req.file.filename : "default.jpg";
 
+    //valida entrada de tipo de evento
     if (!validarTipoEvento(tipo)) {
         return res.status(400).json({ error: `Tipo de evento inválido: ${tipo}. Debe ser 'seminario', 'taller' o 'conferencia'.` });
     }

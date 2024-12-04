@@ -6,6 +6,7 @@ const authMiddleware = require('../middleware/authMiddleware');
 
 const daoA = new AccessibilityDAO();
 
+//Obtener configuracion de accesibilidad de usuario logueado
 accesibilidadRouter.get("/", (req, res, next) => {
     if(!req.session.currentUser){
         return res.status(200).json({
@@ -23,6 +24,7 @@ accesibilidadRouter.get("/", (req, res, next) => {
     });
 });
 
+//Editar configuracion de accesibilidad de usuario logueado
 accesibilidadRouter.put("/editar", authMiddleware.requireUser, (req, res, next) => {
     let configuracion = {
         id_usuario: req.session.currentUser.id,

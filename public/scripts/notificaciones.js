@@ -1,7 +1,13 @@
+//cargar notificaciones cada 5 sec
+setInterval(() => {
+    cargarNotificaciones();
+}, 5000);
+
 $('#notificacionesModal').on('show.bs.modal', function () {
     cargarNotificaciones();
 });
 
+//cargar notificaciones
 function cargarNotificaciones() {
     $.ajax({
         url: '/notificaciones',
@@ -28,6 +34,7 @@ function cargarNotificaciones() {
     });
 }
 
+//marcar notificación como vista
 function marcarComoVisto(id) {
     $.ajax({
         url: `/notificaciones/visto/${id}`,

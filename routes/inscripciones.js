@@ -18,11 +18,12 @@ inscripcionesRouter.post('/inscribir', authMiddleware.requireUser, (req, res, ne
     const { eventoId } = req.body;
     const usuarioId = req.session.currentUser.id;
 
-    //Verificar si el usuario está inscrito
+    //Verificar si el usuario ya está inscrito
     daoI.getInscripcion(usuarioId, eventoId, (err, inscrito) => {
         if (err) {
             next(err);
         }
+        //Si ya está inscrito, devolver error
         if (inscrito) {
             return res.status(400).json({ error: 'Ya estás inscrito en este evento' });
         }
@@ -35,17 +36,30 @@ inscripcionesRouter.post('/inscribir', authMiddleware.requireUser, (req, res, ne
                 if (err) {
                     next(err);
                 }
+                //Si el evento está completo, inscribir en lista de espera
                 if (inscripciones.length >= evento.capacidad_maxima) {
                     daoI.esperaUsuario(usuarioId, eventoId, (err, inscripcion) => {
                         if (err) {
                             next(err);
                         }
-                        //notificacion de lista de espera
+                        const mensaje = `Has sido inscrito en la lista de espera del evento con ID ${eventoId}.`;
+                        const tipo = "EN_LISTA_ESPERA";
+                        const fecha = new Date();
+                        //Notificar al usuario que está en lista de espera
+                        daoN.insertarNotificacion(usuarioId, tipo, evento.titulo, fecha, false, (err, insertId) => {
+                            if (err) {
+                                next(err);
+                            }
+                        });
+
+                        console.log("Inscrito en lista de espera");
                         evento.inscrito = true;
                         evento.estado = 'lista_espera';
+                        //Renderizar la vista del evento con nuevo estado
                         res.render("partials/evento", { evento, usuario: req.session.currentUser });
                     });
-                }
+                }else{
+                    //Si hay espacio, inscribir directamente
                     daoI.inscribirUsuario(usuarioId, eventoId, (err, inscripcion) => {
                         if (err) {
                             next(err);
@@ -54,16 +68,20 @@ inscripcionesRouter.post('/inscribir', authMiddleware.requireUser, (req, res, ne
                         const tipo = "CONFIRMACION_INSCRIPCION";
                         const fecha = new Date();
                         
-                        daoN.insertarNotificacion(usuarioId, tipo, eventoId, fecha, false, (err, insertId) => {
+                        //Notificar al usuario que se ha inscrito
+                        daoN.insertarNotificacion(usuarioId, tipo, evento.titulo, fecha, false, (err, insertId) => {
                             if (err) {
-                                console.error("Error al insertar la notificación de desinscripción:", err);
+                                next(err);
                             }
                         });
 
                         evento.inscrito = true;
                         evento.estado = 'inscrito';
+                        //Renderizar la vista del evento con nuevo estado
                         res.render("partials/evento", { evento, usuario: req.session.currentUser });
                     });
+                }
+                
             });
         });
     });
@@ -79,6 +97,7 @@ inscripcionesRouter.post('/desinscribir', authMiddleware.requireUser, (req, res,
         if (err) {
             next(err);
         }
+        //Si no está inscrito, devolver error
         if (!inscrito) {
             console.log("No estás inscrito en este evento");
             return res.status(400).json({ error: 'No estás inscrito en este evento' });
@@ -95,9 +114,10 @@ inscripcionesRouter.post('/desinscribir', authMiddleware.requireUser, (req, res,
                 const info = evento.id;
                 const tipo = "DESINSCRIPCION_EVENTO";
                 const fecha = new Date();
-                daoN.insertarNotificacion(usuarioId, tipo, eventoId, fecha, false, (err, insertId) => {
+                //Notificar al usuario que se ha desinscrito
+                daoN.insertarNotificacion(usuarioId, tipo, evento.titulo, fecha, false, (err, insertId) => {
                     if (err) {
-                        console.error("Error al insertar la notificación de desinscripción:", err);
+                        next(err);
                     }
                 });
                 evento.inscrito = false;

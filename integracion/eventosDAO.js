@@ -10,6 +10,7 @@ function validarTipoEvento(tipo) {
 
 class EventosDAO {
 
+    //Obtiene todos los eventos
     getEventos(callback){
         db.query("SELECT * FROM eventos", function(e, rows) {
             if (e) callback(new Error(e));
@@ -19,6 +20,7 @@ class EventosDAO {
         })
     }
 
+    //Obtiene todos los eventos de un organizador
     getEventosOrganizador(idOrganizador, callback) {
         const sql = 'SELECT * FROM eventos WHERE id_organizador = ?';
         db.query(sql, [idOrganizador], (error, resultados) => {
@@ -30,7 +32,7 @@ class EventosDAO {
         });
     }
     
-
+    //Obtiene todos los eventos de un usuario donde está inscrito
     getEventosUsuario(id_usuario, callback){
         db.query("SELECT * FROM inscripciones WHERE id_evento = ? AND id_usuario = ?", [id_evento, id_usuario], function(e, rows) {
             if (e) callback(new Error(e));
@@ -40,16 +42,7 @@ class EventosDAO {
         })
     }
 
-    insertEvento(evento, callback){
-        db.query("INSERT INTO eventos (titulo, descripcion, fecha, hora, ubicacion, capacidad_maxima, tipo, id_organizador) values(?,?,?,?,?,?,?,?)",
-        [evento.titulo, evento.descripcion, evento.fecha, evento.hora, evento.ubicacion, evento.capacidad_maxima, evento.tipo, evento.id_organizador ], (e, rows) =>{
-            c.release()
-            if (e) callback(new Error(e));
-            else callback(null,evento);
-        });
-              
-    }
-
+    //Obtiene un evento por su id
     getEventoById(id, callback) {
         db.query("SELECT * FROM eventos WHERE id = ?", [id], function(e, rows) {
             if (e) callback(new Error(e));
@@ -59,13 +52,13 @@ class EventosDAO {
         });
     }
     
-    deleteEventoById(id, id_organizador, callback) {
-       
-    
+    //Elimina un evento por su id
+    deleteEventoById(id, id_organizador, callback) { 
         db.query("DELETE FROM eventos WHERE id = ? AND id_organizador = ?", [id, id_organizador], (e) => {
             if (e) {
                 return callback(new Error(`Error al eliminar el evento: ${e.message}`));
             }
+            //Elimina toda las inscripciones asociadas al evento
             db.query("DELETE FROM inscripciones WHERE id_evento = ?", [id], (e) => {
                 if (e) {
                     return callback(new Error(`Error al eliminar inscripciones: ${e.message}`));
@@ -75,7 +68,7 @@ class EventosDAO {
         });
     }
     
-
+    //Edita un evento por su id
     editarEvento(evento, id_organizador, callback) {
         return new Promise((resolve, reject) => {
             const { id, titulo, descripcion, fecha, hora, ubicacion, capacidad_maxima, tipo, foto } = evento;
@@ -99,7 +92,7 @@ class EventosDAO {
         });
     }
     
-    
+    //Crea un evento
     crearEvento(evento) {
         return new Promise((resolve, reject) => {
             const { titulo, descripcion, fecha, hora, ubicacion, capacidad_maxima, tipo, id_organizador, foto } = evento;
@@ -123,6 +116,7 @@ class EventosDAO {
     }
     
     
+    //Obtiene los eventos que coincidan con los parámetros de búsqueda
     buscarEventos(query, date, location, capacityType, capacity, eventType, callback) {
         let sql = 'SELECT * FROM eventos WHERE 1=1';
         const params = [];
@@ -183,6 +177,7 @@ class EventosDAO {
         });
     }
 
+    //Obtiene todas las inscripciones de un evento
     getInscripcionesPorEvento(eventoId, callback) {
         const sql = 'SELECT * FROM inscripciones WHERE id_evento = ?';
         db.query(sql, [eventoId], (error, resultados) => {
