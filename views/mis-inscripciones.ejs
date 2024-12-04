@@ -44,16 +44,16 @@
     <script>
         $(document).ready(function () {
             $(document).on('click', '.btn-desinscribirse', function () {
-                const inscripcionId = $(this).data('inscripcion');
+
+                const eventoId = $(this).data('id');
                 $.ajax({
                     url: '/eventos/desinscribir',
                     type: 'POST',
-                    data: { inscripcionId: inscripcionId },
+                    data: { eventoId: eventoId },
                     success: function (response) {
-                        alert('Desinscripción realizada con éxito');
                         location.reload();
                     },
-                    error: function () {
+                    error: function (error) {
                         alert('Error al desinscribirse');
                     }
                 });

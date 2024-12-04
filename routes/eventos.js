@@ -62,12 +62,7 @@ eventosRouter.get('/mis-eventos', authMiddleware.requireUser, (req, res, next) =
     });
 });
 
-/* POR ELIMINAR
-eventosRouter.get("/crear", authMiddleware.requireUser, (req, res, next) => {
-    res.render("formularioEvento", { usuario: req.session.currentUser});
-});
-
-
+/*
 eventosRouter.post("/crear", authMiddleware.requireUser, (req, res) => {
     const { titulo, descripcion, fecha, hora, ubicacion, capacidad_maxima, tipo } = req.body;
 
@@ -161,13 +156,14 @@ eventosRouter.post("/anyadir", fotos.single("foto"), async (req, res, next) => {
 //------------INSCRIPCIONES---------------\\
 
 //Inscribirse
-eventosRouter.post('/inscribir', authMiddleware.requireUser, (req, res) => {
-    const { eventoId, usuarioId } = req.body;
+eventosRouter.post('/inscribir', authMiddleware.requireUser, (req, res, next) => {
+    const { eventoId  } = req.body;
+    const usuarioId = req.session.currentUser.id;
 
     // Verificar si el usuario ya está inscrito
     daoI.getInscripcion(usuarioId, eventoId, (err, inscrito) => {
         if (err) {
-            return res.status(500).json({ error: 'Error al verificar inscripción' });
+            next(err);
         }
         if (inscrito) {
             return res.status(400).json({ error: 'Ya estás inscrito en este evento' });
@@ -176,7 +172,7 @@ eventosRouter.post('/inscribir', authMiddleware.requireUser, (req, res) => {
         // Realizar la inscripción
         daoI.inscribirUsuario(usuarioId, eventoId, (err, inscripcion) => {
             if (err) {
-                return res.status(500).json({ error: 'Error al inscribirse en el evento' });
+                next(err);
             }
             res.json(inscripcion);
         });
@@ -184,22 +180,26 @@ eventosRouter.post('/inscribir', authMiddleware.requireUser, (req, res) => {
 });
 
 //Desinscribir
-eventosRouter.post('/desinscribir', authMiddleware.requireUser, (req, res) => {
-    const { eventoId, usuarioId } = req.body;
+eventosRouter.post('/desinscribir', authMiddleware.requireUser, (req, res, next) => {
+    const { eventoId  } = req.body;
+    const usuarioId = req.session.currentUser.id;
+
+    console.log(usuarioId, eventoId);
 
     // Verificar si el usuario está inscrito
     daoI.getInscripcion(usuarioId, eventoId, (err, inscrito) => {
         if (err) {
-            return res.status(500).json({ error: 'Error al verificar inscripción' });
+            next(err);
         }
         if (!inscrito) {
+            console.log("No estás inscrito en este evento");
             return res.status(400).json({ error: 'No estás inscrito en este evento' });
         }
 
         // Eliminar la inscripción
         daoI.desinscribirUsuario(usuarioId, eventoId, (err, result) => {
             if (err) {
-                return res.status(500).json({ error: 'Error al desinscribirse del evento' });
+                next(err);
             }
             res.json(result);
         });
