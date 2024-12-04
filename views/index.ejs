@@ -62,10 +62,11 @@
         </div>
     </div>
 
+    <!--TODO: un ejs header y scripts con todo los bootstrap, jquery, estilos y scripts-->
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    
     <script>
-
         $(document).ready(function () {
             $("#searchForm").on("submit", function (e) {
                 e.preventDefault();
@@ -139,7 +140,6 @@
         });
 
         $('#notificacionesModal').on('show.bs.modal', function () {
-            console.log("AAAAAAAAAA")
         $.ajax({
             url: '/notificaciones',
             method: 'GET',
@@ -148,16 +148,17 @@
                 listaNotificaciones.empty();
 
                 data.notificaciones.forEach(function(notificacion) {
-                    const claseNuevo = notificacion.leida ? '' : 'text-danger';
-                    const textoNuevo = notificacion.leida ? '' : '[Nuevo]';
+                const claseNuevo = notificacion.leida ? '' : 'text-danger';
+                const textoNuevo = notificacion.leida ? '' : '[Nuevo]';
 
-                    listaNotificaciones.append(`
-                        <li class="list-group-item d-flex justify-content-between align-items-center">
-                            <span class="${claseNuevo}">${textoNuevo} ${notificacion.mensaje}</span>
-                            <button class="btn btn-sm btn-link" onclick="marcarComoVisto(${notificacion.id})">Marcar como visto</button>
-                        </li>
-                    `);
-                });
+                listaNotificaciones.append(`
+                    <li class="list-group-item d-flex justify-content-between align-items-center">
+                        <span class="${claseNuevo}">${textoNuevo} ${notificacion.mensaje}</span>
+                        <button class="btn btn-sm btn-link" onclick="marcarComoVisto(${notificacion.id})">Marcar como visto</button>
+                    </li>
+                `);
+            });
+
             },
             error: function() {
                 console.error('Error al cargar las notificaciones');

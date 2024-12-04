@@ -333,13 +333,24 @@ eventosRouter.post('/ascender-inscripcion', authMiddleware.requireUser, (req, re
             if (err) {
                 return next(err);
             }
-            if (inscripciones.length  >= evento.capacidad_maxima) {
+            if (inscripciones.length >= evento.capacidad_maxima) {
                 res.status(400).json({ error: 'No se puede ascender la inscripción porque el evento está completo' });
-            }else{
-                daoI.ascenderInscripcion(inscripcionId, (err) => {
+            } else {
+                daoI.ascenderInscripcion(inscripcionId, (err, usuarioId) => {
                     if (err) {
                         return next(err);
                     }
+
+                    //Notificación
+                    const tipo = "ASCENSO_LISTA_ESPERA";
+                    const fecha = new Date();
+                    const query = `INSERT INTO Notificaciones (id_usuario, tipo, info, fecha, leida) VALUES (?, ?, ?, ?, false)`;
+                    db.query(query, [usuarioId, tipo, `Has sido ascendido al evento ${evento.titulo}.`, fecha], (err) => {
+                        if (err) {
+                            console.error("Error al insertar notificación:", err);
+                        }
+                    });
+
                     res.json({ success: true });
                 });
             }
@@ -347,17 +358,29 @@ eventosRouter.post('/ascender-inscripcion', authMiddleware.requireUser, (req, re
     });
 });
 
+
 eventosRouter.post('/eliminar-inscripcion', authMiddleware.requireUser, (req, res, next) => {
-    console.log(req.body);
     const { inscripcionId } = req.body;
 
-    daoI.eliminarInscripcion(inscripcionId, (err) => {
+    daoI.eliminarInscripcion(inscripcionId, (err, usuarioId) => {
         if (err) {
             return next(err);
         }
+        console.log("Se elimina")
+        //Notificación
+        const tipo = "EXPULSION_EVENTO";
+        const fecha = new Date();
+        const query = `INSERT INTO Notificaciones (id_usuario, tipo, info, fecha, leida) VALUES (?, ?, ?, ?, false)`;
+        db.query(query, [usuarioId, tipo, `Tu inscripción en el evento ha sido eliminada.`, fecha], (err) => {
+            if (err) {
+                console.error("Error al insertar notificación:", err);
+            }
+        });
+
         res.json({ success: true });
     });
 });
+
 
 eventosRouter.get('/inscripciones/:eventoId', authMiddleware.requireUser, (req, res, next) => {
     const eventoId = req.params.eventoId;
