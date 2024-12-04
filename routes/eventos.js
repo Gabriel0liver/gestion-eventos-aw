@@ -78,13 +78,10 @@ eventosRouter.get("/gestion_eventos", authMiddleware.requireUser, authMiddleware
 eventosRouter.get('/mis-eventos', authMiddleware.requireUser, (req, res, next) => {
 
     daoE.getEventosOrganizador(req.session.currentUser.id, (error, eventos) => {
-
-    daoE.getEventosOrganizador(req.session.currentUser.id, (error, eventos) => {
         if (error) {
             console.error("Error fetching eventos:", error);
             return next(error);
         }
-        res.status(200).json({ eventos });
         res.status(200).json({ eventos });
     });
 });
@@ -172,7 +169,6 @@ eventosRouter.post("/editar/:id", authMiddleware.requireUser, authMiddleware.esO
     }
 
     try {
-        await daoE.editarEvento({ id, titulo, descripcion, fecha, hora, ubicacion, capacidad_maxima, tipo, foto }, req.session.currentUser.id);
         await daoE.editarEvento({ id, titulo, descripcion, fecha, hora, ubicacion, capacidad_maxima, tipo, foto }, req.session.currentUser.id);
         res.json({ mensaje: "Evento actualizado correctamente" });
     } catch (error) {
@@ -381,6 +377,72 @@ eventosRouter.post('/eliminar-inscripcion', authMiddleware.requireUser, (req, re
         res.json({ success: true });
     });
 });
+
+eventosRouter.get('/inscripciones/:eventoId', authMiddleware.requireUser, (req, res, next) => {
+    const eventoId = req.params.eventoId;
+
+    daoI.getInscripcionesPorEvento(eventoId, (err, inscripciones) => {
+        if (err) {
+            return next(err);
+        }
+
+        res.json({ inscripciones });
+    });
+});
+
+eventosRouter.get('/detalle-inscripciones/:eventoId', authMiddleware.requireUser, (req, res, next) => {
+    const eventoId = req.params.eventoId;
+
+    daoI.getInscripcionesPorEvento(eventoId, (err, inscripciones) => {
+        if (err) {
+            return next(err);
+        }
+
+        const inscritos = inscripciones.filter(inscripcion => inscripcion.estado === 'inscrito');
+        const listaEspera = inscripciones.filter(inscripcion => inscripcion.estado === 'lista_espera');
+
+        res.json({ inscritos, listaEspera });
+    });
+});
+
+eventosRouter.post('/ascender-inscripcion', authMiddleware.requireUser, (req, res, next) => {
+    const { inscripcionId } = req.body;
+
+    daoI.getEvento(inscripcionId, (err, evento) => {
+        if (err) {
+            return next(err);
+        }
+        daoI.getInscripcionesActivasPorEvento(evento.id, (err, inscripciones) => {
+            if (err) {
+                return next(err);
+            }
+            if (inscripciones.length  >= evento.capacidad_maxima) {
+                res.status(400).json({ error: 'No se puede ascender la inscripción porque el evento está completo' });
+            }else{
+                daoI.ascenderInscripcion(inscripcionId, (err) => {
+                    if (err) {
+                        return next(err);
+                    }
+                    res.json({ success: true });
+                });
+            }
+        });
+    });
+});
+
+eventosRouter.post('/eliminar-inscripcion', authMiddleware.requireUser, (req, res, next) => {
+    console.log(req.body);
+    const { inscripcionId } = req.body;
+
+    console.log(inscripcionId);
+
+    daoI.eliminarInscripcion(inscripcionId, (err) => {
+        if (err) {
+            return next(err);
+        }
+        res.json({ success: true });
+    });
 });
 });
+
 module.exports= eventosRouter;
