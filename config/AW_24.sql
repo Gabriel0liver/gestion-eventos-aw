@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: 127.0.0.1
--- Tiempo de generación: 04-12-2024 a las 01:14:00
+-- Tiempo de generación: 04-12-2024 a las 19:09:52
 -- Versión del servidor: 10.4.28-MariaDB
 -- Versión de PHP: 8.2.4
 
@@ -99,8 +99,48 @@ CREATE TABLE `inscripciones` (
 --
 
 INSERT INTO `inscripciones` (`id`, `id_usuario`, `id_evento`, `estado`, `fecha_inscripcion`) VALUES
-(1, 3, 1, 'inscrito', '2024-12-04 00:14:20'),
-(2, 3, 20, 'inscrito', '2024-12-04 00:28:35');
+(11, 3, 1, 'inscrito', '2024-12-04 17:13:29'),
+(17, 3, 2, 'inscrito', '2024-12-04 18:48:32'),
+(18, 1, 3, 'inscrito', '2024-12-04 18:49:52'),
+(19, 1, 2, 'inscrito', '2024-12-04 18:49:54');
+
+-- --------------------------------------------------------
+
+--
+-- Estructura de tabla para la tabla `notificaciones`
+--
+
+CREATE TABLE `notificaciones` (
+  `id` int(11) NOT NULL,
+  `id_usuario` int(11) NOT NULL,
+  `tipo` varchar(50) NOT NULL,
+  `info` text NOT NULL,
+  `fecha` timestamp NOT NULL DEFAULT current_timestamp(),
+  `leida` tinyint(1) DEFAULT 0
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Volcado de datos para la tabla `notificaciones`
+--
+
+INSERT INTO `notificaciones` (`id`, `id_usuario`, `tipo`, `info`, `fecha`, `leida`) VALUES
+(1, 3, 'CANCELACION_EVENTO', '1', '2024-12-03 23:00:00', 1),
+(2, 3, 'CONFIRMACION_INSCRIPCION', '3', '2024-12-04 13:58:38', 1),
+(3, 3, 'CONFIRMACION_INSCRIPCION', '2', '2024-12-04 13:58:46', 1),
+(4, 3, 'CONFIRMACION_INSCRIPCION', '19', '2024-12-04 13:59:07', 0),
+(5, 3, 'CONFIRMACION_INSCRIPCION', '2', '2024-12-04 14:42:04', 0),
+(6, 3, 'CONFIRMACION_INSCRIPCION', '2', '2024-12-04 16:07:53', 0),
+(7, 3, 'CONFIRMACION_INSCRIPCION', '3', '2024-12-04 16:08:02', 0),
+(8, 3, 'CONFIRMACION_INSCRIPCION', '1', '2024-12-04 16:13:29', 0),
+(9, 3, 'CONFIRMACION_INSCRIPCION', '2', '2024-12-04 16:13:30', 1),
+(10, 3, 'CONFIRMACION_INSCRIPCION', '3', '2024-12-04 16:16:31', 0),
+(11, 3, 'CONFIRMACION_INSCRIPCION', '5', '2024-12-04 16:16:35', 1),
+(12, 3, 'CONFIRMACION_INSCRIPCION', '4', '2024-12-04 16:16:38', 1),
+(13, 3, 'DESINSCRIPCION_EVENTO', '2', '2024-12-04 16:26:42', 1),
+(14, 1, 'CONFIRMACION_INSCRIPCION', '3', '2024-12-04 17:45:44', 0),
+(15, 3, 'CONFIRMACION_INSCRIPCION', '2', '2024-12-04 17:48:32', 0),
+(16, 1, 'CONFIRMACION_INSCRIPCION', '3', '2024-12-04 17:49:52', 0),
+(17, 1, 'CONFIRMACION_INSCRIPCION', '2', '2024-12-04 17:49:54', 0);
 
 -- --------------------------------------------------------
 
@@ -119,7 +159,7 @@ CREATE TABLE `sessions` (
 --
 
 INSERT INTO `sessions` (`session_id`, `expires`, `data`) VALUES
-('tDrWJRSv2hD3hncg8seXLMHQT6kZvAAQ', 1733357626, '{\"cookie\":{\"originalMaxAge\":null,\"expires\":null,\"httpOnly\":true,\"path\":\"/\"},\"currentUser\":{\"id\":3,\"nombre\":\"asistente1\",\"correo\":\"asistente1@gmail.com\",\"contrasena\":\"1234\",\"telefono\":\"111111111\",\"facultad\":\"Medicina\",\"rol\":\"asistente\"}}');
+('-gIb1CuNjU89jVKTmIAS-PzcsaFq9QX3', 1733421853, '{\"cookie\":{\"originalMaxAge\":null,\"expires\":null,\"httpOnly\":true,\"path\":\"/\"},\"currentUser\":{\"id\":1,\"nombre\":\"Juan Pérez\",\"correo\":\"juan.perez@example.com\",\"contrasena\":\"1234\",\"telefono\":\"123456789\",\"facultad\":\"Informática\",\"rol\":\"organizador\"}}');
 
 -- --------------------------------------------------------
 
@@ -169,6 +209,12 @@ ALTER TABLE `inscripciones`
   ADD PRIMARY KEY (`id`);
 
 --
+-- Indices de la tabla `notificaciones`
+--
+ALTER TABLE `notificaciones`
+  ADD PRIMARY KEY (`id`);
+
+--
 -- Indices de la tabla `usuarios`
 --
 ALTER TABLE `usuarios`
@@ -188,7 +234,13 @@ ALTER TABLE `eventos`
 -- AUTO_INCREMENT de la tabla `inscripciones`
 --
 ALTER TABLE `inscripciones`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=20;
+
+--
+-- AUTO_INCREMENT de la tabla `notificaciones`
+--
+ALTER TABLE `notificaciones`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=18;
 
 --
 -- AUTO_INCREMENT de la tabla `usuarios`

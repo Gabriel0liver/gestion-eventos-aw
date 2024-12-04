@@ -4,6 +4,7 @@ const { db } = require("../config/db");
 const authMiddleware = require('../middleware/authMiddleware');
 
 //TODO daonotificaciones
+
 //Obtener notificaciones
 notificacionesRouter.get('/', authMiddleware.requireUser, (req, res) => {
     const idUsuario = req.session.currentUser.id;
