@@ -9,6 +9,7 @@ fetch('/accesibilidad', {
 }).then(response => response.json())
 .then(data => {
     const configuracion = data.configuracion;
+    console.log(configuracion);
     if (configuracion) {
         loggedIn = true;
         if (configuracion.paleta_colores) {

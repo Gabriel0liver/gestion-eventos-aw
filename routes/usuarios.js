@@ -1,6 +1,7 @@
 "use strict";
 const UserDAO = require("../integracion/userDAO");
 const AccessibilityDAO = require("../integracion/accesibilidadDAO");
+const InscripcionesDAO = require("../integracion/inscripcionesDAO");
 const express = require("express");
 const userRouter = express.Router();
 const authMiddleware = require('../middleware/authMiddleware');
@@ -9,6 +10,7 @@ const nodemailer = require('nodemailer');
 
 const daoU = new UserDAO();
 const daoA = new AccessibilityDAO();
+const daoI = new InscripcionesDAO();
 
 const transporter = nodemailer.createTransport({
     service: "Gmail",
@@ -121,7 +123,14 @@ userRouter.post("/recuperar", authMiddleware.requireAnon, (req, res, next) => {
 });
 
 userRouter.get("/perfil", authMiddleware.requireUser, (req, res) => {
-    res.render("perfil", { user: req.session.currentUser });
+    const usuarioId = req.session.currentUser.id;
+
+    daoI.getHistorialEventosUsuario(usuarioId, (error, historial) => {
+        if (error) {
+            return next(error);
+        }
+        res.render("perfil", { user: req.session.currentUser, historial: historial });
+    });
 });
 
 module.exports = userRouter;

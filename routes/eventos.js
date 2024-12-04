@@ -7,6 +7,9 @@ const authMiddleware = require('../middleware/authMiddleware');
 const multer = require('multer');
 const path = require('path');
 
+//para las notificaciones quitar cuando notificacionesDAO
+const { db } = require("../config/db");
+
 const storage = multer.diskStorage({
     destination: function (req, file, cb) {
         cb(null, 'fotos/');
@@ -73,56 +76,78 @@ eventosRouter.get("/gestion_eventos", authMiddleware.requireUser, authMiddleware
 });
 
 eventosRouter.get('/mis-eventos', authMiddleware.requireUser, (req, res, next) => {
-    daoE.getEventosOrganizador(1, (error, eventos) => {
+
+    daoE.getEventosOrganizador(req.session.currentUser.id, (error, eventos) => {
+
+    daoE.getEventosOrganizador(req.session.currentUser.id, (error, eventos) => {
         if (error) {
             console.error("Error fetching eventos:", error);
             return next(error);
         }
-
-        if (!eventos || eventos.length === 0) {
-            console.warn("No se encontraron eventos para el organizador.");
-            return res.status(404).json({ mensaje: "No se encontraron eventos." });
-        }
-        res.json({ eventos });
+        res.status(200).json({ eventos });
+        res.status(200).json({ eventos });
     });
 });
-
-/*
-eventosRouter.post("/crear", authMiddleware.requireUser, (req, res) => {
-    const { titulo, descripcion, fecha, hora, ubicacion, capacidad_maxima, tipo } = req.body;
-
-    const id_organizador = req.session.currentUser.id;
-
-    daoE.verifyOrganizador(id_organizador, (error, esOrganizador) => {
-        if (error) {
-            console.error(error);
-            return res.status(500).send("Error al crear el evento.");
-        }   
-        if (!esOrganizador) {
-            return res.status(403).send("No tienes permisos para crear eventos.");
-        }else{
-            const evento = { titulo, descripcion, fecha, hora, ubicacion, capacidad_maxima, tipo, id_organizador };
-            daoE.insertEvento(evento, (error, evento) => {
-                if (error) {
-                    next(error);
-                }
-                res.redirect("/eventos");
-            });
-        }
-    });
-});
-*/
-
 
 
 eventosRouter.delete("/eliminar/:id", authMiddleware.requireUser, authMiddleware.esOrganizador, (req, res, next) => {
     const eventoId = req.params.id;
-    daoE.deleteEventoById(eventoId, (error) => {
+    
+    daoE.getInscripcionesPorEvento(eventoId, (err, inscripciones) => {
+        if (err) {
+            return next(err);
+        }
+
+        //Si da tiempo pasar a un daoNotificaciones
+        //Crear notificación
+        inscripciones.forEach(inscripcion => {
+            const usuarioId = inscripcion.id_usuario;
+            //TODO pasar info mas completa
+            const info = eventoId;
+            const tipo = "CANCELACION_EVENTO";
+            const fecha = new Date();
+            const query = "INSERT INTO Notificaciones (id_usuario, tipo, info, fecha, leida) VALUES (?, ?, ?, ?, false)";
+            
+            db.query(query, [usuarioId, tipo, eventoId, fecha], (err) => {
+                if (err) {
+                    console.error("Error al insertar la notificación de cancelación:", err);
+                }
+            });
+        });
+
+        daoE.deleteEventoById(eventoId, (error) => {
+            if (error) {
+                console.error('Error al eliminar evento:', error);
+                return res.status(500).send("Error al eliminar el evento.");
+            }
+            res.status(200).send("Evento eliminado con éxito.");
+        });
+    daoE.deleteEventoById(eventoId, req.session.currentUser.id, (error) => {
         if (error) {
             console.error('Error al eliminar evento:', error);
             return res.status(500).send("Error al eliminar el evento.");
         }
         res.status(200).send("Evento eliminado con éxito.");
+    });
+});
+
+eventosRouter.get('/detalle/:id', (req, res, next) => {
+    const eventoId = req.params.id;
+    daoE.getEventoById(eventoId, (error, evento) => {
+        if (error) {
+            return next(error);
+        }
+        res.render('partials/evento', { evento, usuario: req.session.currentUser });
+    });
+});
+
+eventosRouter.get('/detalle/:id', (req, res, next) => {
+    const eventoId = req.params.id;
+    daoE.getEventoById(eventoId, (error, evento) => {
+        if (error) {
+            return next(error);
+        }
+        res.render('partials/evento', { evento, usuario: req.session.currentUser });
     });
 });
 
@@ -147,7 +172,8 @@ eventosRouter.post("/editar/:id", authMiddleware.requireUser, authMiddleware.esO
     }
 
     try {
-        await daoE.editarEvento({ id, titulo, descripcion, fecha, hora, ubicacion, capacidad_maxima, tipo, foto });
+        await daoE.editarEvento({ id, titulo, descripcion, fecha, hora, ubicacion, capacidad_maxima, tipo, foto }, req.session.currentUser.id);
+        await daoE.editarEvento({ id, titulo, descripcion, fecha, hora, ubicacion, capacidad_maxima, tipo, foto }, req.session.currentUser.id);
         res.json({ mensaje: "Evento actualizado correctamente" });
     } catch (error) {
         console.error("Error al editar evento:", error);
@@ -198,33 +224,31 @@ eventosRouter.post('/inscribir', authMiddleware.requireUser, (req, res, next) =>
             if (err) {
                 next(err);
             }
-            daoI.getInscripccionesPorEvento(eventoId, (err, inscripciones) => {
+            daoI.inscribirUsuario(usuarioId, eventoId, (err, inscripcion) => {
                 if (err) {
                     next(err);
                 }
-                if (inscripciones.length >= evento.capacidad_maxima) {
-                    daoI.esperaUsuario(usuarioId, eventoId, (err, inscripcion) => {
-                        if (err) {
-                            next(err);
-                        }
-                        evento.inscrito = true;
-                        evento.estado = 'lista_espera';
-                        res.render("partials/evento", { evento, usuario: req.session.currentUser });
-                    });
-                    return;
-                }
-                daoI.inscribirUsuario(usuarioId, eventoId, (err, inscripcion) => {
+
+                // Crear la notificación de confirmación de inscripción
+                const mensaje = `Has sido inscrito exitosamente en el evento con ID ${eventoId}.`;
+                const tipo = "CONFIRMACION_INSCRIPCION";
+                const fecha = new Date();
+                const query = "INSERT INTO Notificaciones (id_usuario, tipo, info, fecha, leida) VALUES (?, ?, ?, ?, false)";
+
+                db.query(query, [usuarioId, tipo, eventoId, fecha], (err) => {
                     if (err) {
-                        next(err);
+                        console.error("Error al insertar la notificación de inscripción:", err);
                     }
-                    evento.inscrito = true;
-                    evento.estado = 'inscrito';
-                    res.render("partials/evento", { evento, usuario: req.session.currentUser });
                 });
-            } );
+
+                evento.inscrito = true;
+                evento.estado = 'inscrito';
+                res.render("partials/evento", { evento, usuario: req.session.currentUser });
+            });
         });
     });
 });
+
 
 //Desinscribir
 eventosRouter.post('/desinscribir', authMiddleware.requireUser, (req, res, next) => {
@@ -292,5 +316,70 @@ eventosRouter.get("/mis-inscripciones", authMiddleware.requireUser, (req, res, n
     });
 });
 
+eventosRouter.get('/inscripciones/:eventoId', authMiddleware.requireUser, (req, res, next) => {
+    const eventoId = req.params.eventoId;
+
+    daoI.getInscripcionesPorEvento(eventoId, (err, inscripciones) => {
+        if (err) {
+            return next(err);
+        }
+
+        res.json({ inscripciones });
+    });
+});
+
+eventosRouter.get('/detalle-inscripciones/:eventoId', authMiddleware.requireUser, (req, res, next) => {
+    const eventoId = req.params.eventoId;
+
+    daoI.getInscripcionesPorEvento(eventoId, (err, inscripciones) => {
+        if (err) {
+            return next(err);
+        }
+
+        const inscritos = inscripciones.filter(inscripcion => inscripcion.estado === 'inscrito');
+        const listaEspera = inscripciones.filter(inscripcion => inscripcion.estado === 'lista_espera');
+
+        res.json({ inscritos, listaEspera });
+    });
+});
+
+eventosRouter.post('/ascender-inscripcion', authMiddleware.requireUser, (req, res, next) => {
+    const { inscripcionId } = req.body;
+
+    daoI.getEvento(inscripcionId, (err, evento) => {
+        if (err) {
+            return next(err);
+        }
+        daoI.getInscripcionesActivasPorEvento(evento.id, (err, inscripciones) => {
+            if (err) {
+                return next(err);
+            }
+            if (inscripciones.length  >= evento.capacidad_maxima) {
+                res.status(400).json({ error: 'No se puede ascender la inscripción porque el evento está completo' });
+            }else{
+                daoI.ascenderInscripcion(inscripcionId, (err) => {
+                    if (err) {
+                        return next(err);
+                    }
+                    res.json({ success: true });
+                });
+            }
+        });
+    });
+});
+
+eventosRouter.post('/eliminar-inscripcion', authMiddleware.requireUser, (req, res, next) => {
+    console.log(req.body);
+    const { inscripcionId } = req.body;
+
+    console.log(inscripcionId);
+
+    daoI.eliminarInscripcion(inscripcionId, (err) => {
+        if (err) {
+            return next(err);
+        }
+        res.json({ success: true });
+    });
+});
 
 module.exports= eventosRouter;

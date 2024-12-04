@@ -30,6 +30,7 @@ const routerIndex = require('./routes/index');
 const routerUsuarios= require("./routes/usuarios");
 const routerEventos= require("./routes/eventos");
 const routerAccesibilidad= require("./routes/accesibilidad");
+const routerNotificaciones = require("./routes/notificaciones");
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
@@ -46,6 +47,7 @@ app.use(bodyParser.json());
 app.use('/usuarios',routerUsuarios)
 app.use('/eventos',routerEventos)
 app.use('/accesibilidad',routerAccesibilidad)
+app.use('/notificaciones',routerNotificaciones)
 app.use('/',routerIndex)
 
 app.use(function(request,response,next){

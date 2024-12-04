@@ -6,7 +6,7 @@
     <title>Eventos Actuales</title>
     
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css">
-    <link rel="stylesheet" href="./css/index.css">
+    <link rel="stylesheet" href="./css/accesibilidad.css">
     <script src="./scripts/accesibilidad.js"></script>
     
 </head>
@@ -14,9 +14,14 @@
     
     <%- include('./navbar', { usuario: usuario }) %>
    
+  
+
     <div class="container mt-5 pt-5">
+
+        <ul id="listaNotificaciones"></ul>
+
         <h1 class="text-center mb-4">Eventos</h1>
-        
+
         <!-- Formulario de búsqueda y filtros -->
         <form id="searchForm" class="mb-4">
             <div class="row gy-3">
@@ -56,9 +61,6 @@
             <%- include('./partials/eventos', { eventos }) %>
         </div>
     </div>
-
-    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
     <script>
 
         $(document).ready(function () {
@@ -132,6 +134,49 @@
                 });
             });
         });
+
+        $('#notificacionesModal').on('show.bs.modal', function () {
+        $.ajax({
+            url: '/notificaciones',
+            method: 'GET',
+            success: function(data) {
+                const listaNotificaciones = $('#listaNotificaciones');
+                listaNotificaciones.empty();
+
+                data.notificaciones.forEach(function(notificacion) {
+                    const claseNuevo = notificacion.leida ? '' : 'text-danger';
+                    const textoNuevo = notificacion.leida ? '' : '[Nuevo]';
+
+                    listaNotificaciones.append(`
+                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                            <span class="${claseNuevo}">${textoNuevo} ${notificacion.mensaje}</span>
+                            <button class="btn btn-sm btn-link" onclick="marcarComoVisto(${notificacion.id})">Marcar como visto</button>
+                        </li>
+                    `);
+                });
+            },
+            error: function() {
+                console.error('Error al cargar las notificaciones');
+            }
+        });
+    });
+
+    function marcarComoVisto(id) {
+        $.ajax({
+            url: `/notificaciones/visto/${id}`,
+            method: 'POST',
+            success: function(response) {
+                alert(response.message);
+                $('#notificacionesModal').modal('hide');
+                $('#notificacionesModal').modal('show');
+            },
+            error: function() {
+                console.error('Error al marcar la notificación como vista');
+            }
+        });
+    }
+
+
     </script>
 </body>
 </html>

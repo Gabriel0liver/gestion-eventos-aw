@@ -1,0 +1,30 @@
+
+
+body.daltonismo nav {
+    filter: grayscale(100%);
+}
+
+
+body.daltonismo .card {
+    filter: grayscale(100%);
+}
+
+body.daltonismo .container {
+    filter: grayscale(100%);
+}
+
+/* Estilos para el modo alto contraste */
+body.alto-contraste nav {
+    filter: contrast(130%);
+}
+
+
+body.alto-contraste .card {
+    filter: contrast(130%);
+}
+
+body.alto-contraste .container {
+    filter: contrast(130%);
+}
+
+

@@ -45,45 +45,32 @@
                         <a class="nav-link" href="/register">Registrarse</a>
                     </li>
                 <% } %>
+
+                <!-- Enlace de Notificaciones -->
+                <li class="nav-item">
+                    <button class="nav-link" data-bs-toggle="modal" data-bs-target="#notificacionesModal">Notificaciones</button>
+                </li>
             </ul>
         </div>
     </div>
 </nav>
 
-<!-- Modal de Configuración de Accesibilidad -->
-<div class="modal fade" id="accesibilidadModal" tabindex="-1" aria-labelledby="accesibilidadModalLabel" aria-hidden="true">
-    <div class="modal-dialog">
+<!-- Modal de Notificaciones -->
+<div class="modal fade" id="notificacionesModal" tabindex="-1" aria-labelledby="notificacionesModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="accesibilidadModalLabel">Configuración de Accesibilidad</h5>
+                <h5 class="modal-title" id="notificacionesModalLabel">Notificaciones</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
-                <div class="mb-3">
-                    <label for="tamanoFuente" class="form-label">Tamaño de Fuente</label>
-                    <select id="tamanoFuente" class="form-select">
-                        <option value="pequeno">Pequeño</option>
-                        <option value="mediano">Mediano</option>
-                        <option value="grande">Grande</option>
-                    </select>
-                </div>
-                <div class="mb-3">
-                    <label for="paletaColores" class="form-label">Paleta de Colores</label>
-                    <select id="paletaColores" class="form-select">
-                        <option value="default">Default</option>
-                        <option value="daltonismo">Daltonismo</option>
-                        <option value="alto-contraste">Alto Contraste</option>
-                    </select>
-                </div>
+                <ul id="listaNotificaciones" class="list-group">
+
+                </ul>
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
-                <button type="button" class="btn btn-primary" onclick="guardarConfiguracion()">Guardar</button>
             </div>
         </div>
     </div>
 </div>
-
-<!-- Incluir los scripts de Bootstrap y jQuery -->
-<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>

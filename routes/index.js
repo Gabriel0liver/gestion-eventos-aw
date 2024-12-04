@@ -45,6 +45,25 @@ indexRouter.get("/", authMiddleware.requireUser, (req, res, next) => {
     });
 });
 
+indexRouter.get('/cal', (req, res, next) => {
+    res.render("calendario", {usuario: req.session.currentUser});
+});
+
+indexRouter.get('/calendario', (req, res, next) => {
+    daoE.getEventos((error, eventos) => {
+        if (error) {
+            return next(error);
+        }
+        const eventosCalendario = eventos.map(evento => ({
+            id: evento.id,
+            title: evento.titulo,
+            start: evento.fecha,
+            end: evento.fecha
+        }));
+        res.json(eventosCalendario);
+    });
+});
+
 indexRouter.get("/login", authMiddleware.requireAnon, (request, response) =>{
     response.status(200).render("login")}
 );
