@@ -82,12 +82,53 @@
                         eventType: eventType
                     },
                     success: function (response) {
-                        // Actualizar la lista de eventos con los resultados de la búsqueda
-                        console.log(response);
                         $(".eventos").html(response);
                     },
                     error: function () {
                         alert("Error al buscar eventos");
+                    }
+                });
+            });
+            //Inscripción
+            $(document).on('click', '.btn-inscribirse', function () {
+                const eventoId = $(this).data('id');
+                const usuarioId = $(this).data('usuario');
+
+                $.ajax({
+                    url: '/eventos/inscribir',
+                    type: 'POST',
+                    data: {
+                        eventoId: eventoId,
+                        usuarioId: usuarioId
+                    },
+                    success: function (response) {
+                        alert('Inscripción realizada con éxito');
+                        location.reload();
+                    },
+                    error: function () {
+                        alert('Error al inscribirse');
+                    }
+                });
+            });
+
+            //Desinscrir
+            $(document).on('click', '.btn-desinscribirse', function () {
+                const eventoId = $(this).data('id');
+                const usuarioId = $(this).data('usuario');
+
+                $.ajax({
+                    url: '/eventos/desinscribir',
+                    type: 'POST',
+                    data: {
+                        eventoId: eventoId,
+                        usuarioId: usuarioId
+                    },
+                    success: function (response) {
+                        alert('Desinscripción realizada con éxito');
+                        location.reload();
+                    },
+                    error: function () {
+                        alert('Error al desinscribirse');
                     }
                 });
             });

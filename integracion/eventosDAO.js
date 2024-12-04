@@ -2,6 +2,12 @@
 
 const { db } = require("../config/db");
 
+//TODO refactorizar y hacer middleware
+function validarTipoEvento(tipo) {
+    const tiposValidos = ['seminario', 'taller', 'conferencia'];
+    return tiposValidos.includes(tipo);
+}
+
 class EventosDAO {
 
     getEventos(callback){
@@ -13,17 +19,17 @@ class EventosDAO {
         })
     }
 
-    getEventosOrganizador(idOrganizador) {
-        return new Promise((resolve, reject) => {
-            const sql = "SELECT * FROM eventos WHERE id_organizador = ?";
-            db.query(sql, [idOrganizador], (err, result) => {
-                if (err) {
-                    return reject(err);
-                }
-                resolve(result);
-            });
+    getEventosOrganizador(idOrganizador, callback) {
+        const sql = 'SELECT * FROM eventos WHERE id_organizador = ?';
+        db.query(sql, [idOrganizador], (error, resultados) => {
+            if (error) {
+                console.error("Error en la base de datos:", error);
+                return callback(error, null);
+            }
+            callback(null, resultados);
         });
     }
+    
 
     getEventosUsuario(id_usuario, callback){
         db.query("SELECT * FROM inscripciones WHERE id_evento = ? AND id_usuario = ?", [id_evento, id_usuario], function(e, rows) {
@@ -68,34 +74,48 @@ class EventosDAO {
         });
     }
 
-    editarEvento(eventoData) {
-        console.log("AAAAAA");
+    editarEvento(evento) {
         return new Promise((resolve, reject) => {
-            const sql = ` UPDATE eventos
-                SET titulo = ?, descripcion = ?, fecha = ?, hora = ?, ubicacion = ?, capacidad_maxima = ?, foto = ?
-                WHERE id = ?`;
-            const { id, titulo, descripcion, fecha, hora, ubicacion, capacidad_maxima, foto } = eventoData;
-            db.query(sql, [titulo, descripcion, fecha, hora, ubicacion, capacidad_maxima, foto, id], (err, result) => {
+            const { id, titulo, descripcion, fecha, hora, ubicacion, capacidad_maxima, tipo, foto } = evento;
+    
+            if (!validarTipoEvento(tipo)) {
+                return reject(new Error(`Tipo de evento inválido: ${tipo}. Debe ser 'seminario', 'taller' o 'conferencia'.`));
+            }
+    
+            const sql = `
+                UPDATE eventos 
+                SET titulo = ?, descripcion = ?, fecha = ?, hora = ?, ubicacion = ?, capacidad_maxima = ?, tipo = ?, foto = COALESCE(?, foto) 
+                WHERE id = ?
+            `;
+    
+            db.query(sql, [titulo, descripcion, fecha, hora, ubicacion, capacidad_maxima, tipo, foto, id], (err, results) => {
                 if (err) {
                     return reject(err);
                 }
-                resolve(result);
+                resolve(results);
             });
         });
     }
     
     
-    crearEvento(eventoData) {
+    crearEvento(evento) {
         return new Promise((resolve, reject) => {
+            const { titulo, descripcion, fecha, hora, ubicacion, capacidad_maxima, tipo, id_organizador, foto } = evento;
+    
+            if (!validarTipoEvento(tipo)) {
+                return reject(new Error(`Tipo de evento inválido: ${tipo}. Debe ser 'seminario', 'taller' o 'conferencia'.`));
+            }
+    
             const sql = `
-                INSERT INTO eventos (titulo, descripcion, fecha, hora, ubicacion, capacidad_maxima,id_organizador, foto)
-                VALUES (?, ?, ?, ?, ?, ?, ?, ?)`;
-            const { titulo, descripcion, fecha, hora, ubicacion, capacidad_maxima,id_organizador, foto } = eventoData;
-            db.query(sql, [titulo, descripcion, fecha, hora, ubicacion, capacidad_maxima,id_organizador, foto], (err, result) => {
+                INSERT INTO eventos (titulo, descripcion, fecha, hora, ubicacion, capacidad_maxima, tipo, id_organizador, foto) 
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+            `;
+    
+            db.query(sql, [titulo, descripcion, fecha, hora, ubicacion, capacidad_maxima, tipo, id_organizador, foto], (err, results) => {
                 if (err) {
                     return reject(err);
                 }
-                resolve(result);
+                resolve(results);
             });
         });
     }
@@ -135,6 +155,29 @@ class EventosDAO {
                 return callback(err);
             }
             callback(null, rows);
+        });
+    }
+
+    //Obtiene todos los eventos y verifica si el usuario está inscrito
+    getEventosConInscripcion(usuarioId, callback) {
+        db.query('SELECT * FROM eventos', (error, eventos) => {
+            if (error) {
+                return callback(error, null);
+            }
+
+            // Para cada evento, verifica si el usuario está inscrito
+            const eventosConInscripcion = eventos.map(evento => {
+                evento.inscrito = false;
+                db.query('SELECT * FROM inscripciones WHERE id_usuario = ? AND id_evento = ?', [usuarioId, evento.id], (error, result) => {
+                    if (result.length > 0) {
+                        evento.inscrito = true;
+                    }
+                });
+
+                return evento;
+            });
+
+            callback(null, eventosConInscripcion);
         });
     }
 }

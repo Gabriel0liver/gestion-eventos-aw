@@ -18,6 +18,7 @@
 <div class="container mt-5 pt-5">
     <h1>Lista de Eventos</h1>
     <button class="btn btn-success mb-3" id="btnAnyadir">Añadir Evento</button>
+    
     <div id="eventos-container"></div>
 
     <!-- Modal Detalle -->
@@ -94,6 +95,14 @@
                             <label for="capacidad_maxima" class="form-label">Capacidad Máxima</label>
                             <input type="number" class="form-control" id="capacidad_maxima" required>
                         </div>
+                        <div class="mb-3">
+                            <label for="tipo" class="form-label">Tipo</label>
+                            <select class="form-control" id="tipo" required>
+                                <option value="seminario">Seminario</option>
+                                <option value="taller">Taller</option>
+                                <option value="conferencia">Conferencia</option>
+                            </select>
+                        </div>                        
                         <button type="submit" class="btn btn-primary">Guardar cambios</button>
                     </form>
                 </div>
@@ -142,6 +151,14 @@
                             <label for="capacidad_maximaAnyadir" class="form-label">Capacidad Máxima</label>
                             <input type="number" class="form-control" id="capacidad_maximaAnyadir" required>
                         </div>
+                        <div class="mb-3">
+                            <label for="tipoAnyadir" class="form-label">Tipo</label>
+                            <select class="form-control" id="tipoAnyadir" required>
+                                <option value="seminario">Seminario</option>
+                                <option value="taller">Taller</option>
+                                <option value="conferencia">Conferencia</option>
+                            </select>
+                        </div>                        
                         <button type="submit" class="btn btn-primary">Añadir Evento</button>
                     </form>
                 </div>
@@ -151,6 +168,7 @@
             </div>
         </div>
     </div>
+
 </div>
 
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
@@ -177,6 +195,7 @@
                                 <th>Hora</th>
                                 <th>Ubicación</th>
                                 <th>Capacidad Máxima</th>
+                                <th>Tipo</th>
                                 <th>Acciones</th>
                             </tr>
                         </thead>
@@ -191,6 +210,7 @@
                             <td>${evento.hora}</td>
                             <td>${evento.ubicacion}</td>
                             <td>${evento.capacidad_maxima}</td>
+                            <td>${evento.tipo}</td>
                             <td>
                                 <button class="btn btn-info btn-sm btnDetalle">Detalle</button>
                                 <button class="btn btn-warning btn-sm btnEditar">Editar</button>
@@ -226,6 +246,7 @@
                     <strong>Hora:</strong> ${evento.hora} <br>
                     <strong>Ubicación:</strong> ${evento.ubicacion} <br>
                     <strong>Capacidad Máxima:</strong> ${evento.capacidad_maxima} <br>
+                    <strong>Tipo:</strong> ${evento.tipo} <br>
                     <strong>Foto:</strong><br>
                     <img src="${evento.foto ? '/fotos/' + evento.foto : '/fotos/default.jpg'}" alt="Foto del Evento" class="img-fluid" width="200"> 
                 `);
@@ -250,6 +271,7 @@
                 $('#hora').val(evento.hora);
                 $('#ubicacion').val(evento.ubicacion);
                 $('#capacidad_maxima').val(evento.capacidad_maxima);
+                $('#tipo').val(evento.tipo);
                 $('#modalEditar').modal('show');
             }
         });
@@ -307,6 +329,7 @@
         formData.append('hora', $('#hora').val());
         formData.append('ubicacion', $('#ubicacion').val());
         formData.append('capacidad_maxima', $('#capacidad_maxima').val());
+        formData.append('tipo', $('#tipo').val());
 
         const foto = $('#fotoEditar')[0].files[0];
         if (foto) {
@@ -348,6 +371,7 @@
     formData.append('hora', $('#horaAnyadir').val());
     formData.append('ubicacion', $('#ubicacionAnyadir').val());
     formData.append('capacidad_maxima', $('#capacidad_maximaAnyadir').val());
+    formData.append('tipo', $('#tipoAnyadir').val());
 
     const foto = $('#fotoAnyadir')[0].files[0];
     if (foto) {
