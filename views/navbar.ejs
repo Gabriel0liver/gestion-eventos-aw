@@ -74,9 +74,43 @@
     </div>
 </div>
 
-    <!--TODO: un ejs header y scripts con todo los bootstrap, jquery, estilos y scripts-->
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+<!-- Modal de Configuración de Accesibilidad -->
+<div class="modal fade" id="accesibilidadModal" tabindex="-1" aria-labelledby="accesibilidadModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="accesibilidadModalLabel">Configuración de Accesibilidad</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="mb-3">
+                    <label for="tamanoFuente" class="form-label">Tamaño de Fuente</label>
+                    <select id="tamanoFuente" class="form-select">
+                        <option value="pequeno">Pequeño</option>
+                        <option value="mediano">Mediano</option>
+                        <option value="grande">Grande</option>
+                    </select>
+                </div>
+                <div class="mb-3">
+                    <label for="paletaColores" class="form-label">Paleta de Colores</label>
+                    <select id="paletaColores" class="form-select">
+                        <option value="default">Default</option>
+                        <option value="daltonismo">Daltonismo</option>
+                        <option value="alto-contraste">Alto Contraste</option>
+                    </select>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+                <button type="button" class="btn btn-primary" onclick="guardarConfiguracion()">Guardar</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!--TODO: un ejs header y scripts con todo los bootstrap, jquery, estilos y scripts-->
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 
 <script>   
 

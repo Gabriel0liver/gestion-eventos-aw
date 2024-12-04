@@ -118,19 +118,6 @@ eventosRouter.delete("/eliminar/:id", authMiddleware.requireUser, authMiddleware
     });
 });
 
-
-/*
-eventosRouter.get('/detalle/:id', (req, res, next) => {
-    const eventoId = req.params.id;
-    daoE.getEventoById(eventoId, (error, evento) => {
-        if (error) {
-            return next(error);
-        }
-        res.render('partials/evento', { evento, usuario: req.session.currentUser });
-    });
-});
-*/
-
 eventosRouter.get('/detalle/:id', authMiddleware.requireUser, (req, res, next) => {
     const eventoId = req.params.id;
     daoE.getEventoById(eventoId, (error, evento) => {
