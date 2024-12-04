@@ -5,7 +5,7 @@ const { db } = require("../config/db");
 class NotificacionesDAO {
 
     getNotificacionesByUsuario(idUsuario, callback) {
-        const query = "SELECT * FROM Notificaciones WHERE id_usuario = ? ORDER BY fecha DESC";
+        const query = "SELECT * FROM notificaciones WHERE id_usuario = ? ORDER BY fecha DESC";
         db.query(query, [idUsuario], (err, rows) => {
             if (err) callback(new Error(err));
             else callback(null, rows);
@@ -13,7 +13,7 @@ class NotificacionesDAO {
     }
 
     marcarComoVista(idNotificacion, callback) {
-        const query = "UPDATE Notificaciones SET leida = true WHERE id = ?";
+        const query = "UPDATE notificaciones SET leida = true WHERE id = ?";
         db.query(query, [idNotificacion], (err, result) => {
             if (err) callback(new Error(err));
             else callback(null, result.affectedRows > 0);
@@ -21,7 +21,7 @@ class NotificacionesDAO {
     }
 
     insertarNotificacion(id_usuario, tipo, info, fecha, leida, callback) {
-        const query = "INSERT INTO Notificaciones (id_usuario, tipo, info, fecha, leida) VALUES (?, ?, ?, ?, ?)";
+        const query = "INSERT INTO notificaciones (id_usuario, tipo, info, fecha, leida) VALUES (?, ?, ?, ?, ?)";
         db.query(query, [id_usuario, tipo, info, fecha, leida], (err, result) => {
             if (err) {
                 callback(new Error(err));
@@ -32,7 +32,7 @@ class NotificacionesDAO {
     }
 
     eliminarNotificacion(idNotificacion, callback) {
-        const query = "DELETE FROM Notificaciones WHERE id = ?";
+        const query = "DELETE FROM notificaciones WHERE id = ?";
         db.query(query, [idNotificacion], (err, result) => {
             if (err) callback(new Error(err));
             else callback(null, result.affectedRows > 0);
@@ -40,7 +40,7 @@ class NotificacionesDAO {
     }
 
     getNotificacionById(idNotificacion, callback) {
-        const query = "SELECT * FROM Notificaciones WHERE id = ?";
+        const query = "SELECT * FROM notificaciones WHERE id = ?";
         db.query(query, [idNotificacion], (err, rows) => {
             if (err) callback(new Error(err));
             else callback(null, rows[0] || null);

@@ -8,9 +8,10 @@ const authMiddleware = require('../middleware/authMiddleware');
 //Obtener notificaciones
 notificacionesRouter.get('/', authMiddleware.requireUser, (req, res) => {
     const idUsuario = req.session.currentUser.id;
-    const query = "SELECT * FROM Notificaciones WHERE id_usuario = ? ORDER BY fecha DESC";
+    const query = "SELECT * FROM notificaciones WHERE id_usuario = ? ORDER BY fecha DESC";
     db.query(query, [idUsuario], (err, notificaciones) => {
         if (err) {
+            console.log(err);
             return res.status(500).json({ error: 'Error al obtener las notificaciones.' });
         }
 

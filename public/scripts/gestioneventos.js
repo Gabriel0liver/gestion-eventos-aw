@@ -225,7 +225,7 @@ $(document).ready(function () {
         $(document).on('click', '.btnGestionar', function () {
             const eventoId = $(this).data('id');
             $.ajax({
-                url: `/eventos/inscripciones/${eventoId}`,
+                url: `/inscripciones/lista/${eventoId}`,
                 method: 'GET',
                 dataType: 'json',
                 success: function (data) {
@@ -273,7 +273,7 @@ $(document).ready(function () {
             console.log(inscripcionId);
             if (confirm('¿Estás seguro de que deseas eliminar esta inscripción?')) {
                 $.ajax({
-                    url: `/eventos/eliminar-inscripcion`,
+                    url: `/inscripciones/eliminar`,
                     method: 'POST',
                     data: { inscripcionId },
                     success: function () {
@@ -292,7 +292,7 @@ $(document).ready(function () {
         $(document).on('click', '.btnAscenderInscripcion', function () {
             const inscripcionId = $(this).data('id');
             $.ajax({
-                url: `/eventos/ascender-inscripcion`,
+                url: `/inscripciones/ascender`,
                 method: 'POST',
                 data: { inscripcionId },
                 success: function () {
