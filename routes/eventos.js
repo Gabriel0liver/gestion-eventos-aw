@@ -3,6 +3,7 @@ const express = require("express");
 const eventosRouter = express.Router();
 const EventosDAO = require("../integracion/eventosDAO");
 const InscripcionesDAO = require('../integracion/inscripcionesDAO');
+const NotificacionesDAO = require('../integracion/notificacionesDAO');
 const authMiddleware = require('../middleware/authMiddleware');
 const multer = require('multer');
 const path = require('path');
@@ -23,6 +24,7 @@ const fotos = multer({ storage: storage });
 
 const daoE = new EventosDAO();
 const daoI = new InscripcionesDAO();
+const daoN = new NotificacionesDAO();
 
 //TODO refactorizar y hacer middleware
 function validarTipoEvento(tipo) {
@@ -88,27 +90,25 @@ eventosRouter.get('/mis-eventos', authMiddleware.requireUser, (req, res, next) =
 
 eventosRouter.delete("/eliminar/:id", authMiddleware.requireUser, authMiddleware.esOrganizador, (req, res, next) => {
     const eventoId = req.params.id;
-
+    const id_usuario = req.session.currentUser.id;
     daoE.getInscripcionesPorEvento(eventoId, (err, inscripciones) => {
         if (err) {
             return next(err);
         }
 
-        //Crear notificaciones para los usuarios inscritos
         inscripciones.forEach(inscripcion => {
             const usuarioId = inscripcion.id_usuario;
             const tipo = "CANCELACION_EVENTO";
             const fecha = new Date();
-            const query = "INSERT INTO Notificaciones (id_usuario, tipo, info, fecha, leida) VALUES (?, ?, ?, ?, false)";
 
-            db.query(query, [usuarioId, tipo, eventoId, fecha], (err) => {
+            daoN.insertarNotificacion(usuarioId, tipo, eventoId, fecha, false, (err, insertId) => {
                 if (err) {
-                    console.error("Error al insertar la notificación de cancelación:", err);
+                    console.error("Error al insertar la notificación de desinscripción:", err);
                 }
             });
         });
 
-        daoE.deleteEventoById(eventoId, (error) => {
+        daoE.deleteEventoById(eventoId, id_usuario, (error) => {
             if (error) {
                 console.error('Error al eliminar evento:', error);
                 return res.status(500).send("Error al eliminar el evento.");
@@ -117,6 +117,7 @@ eventosRouter.delete("/eliminar/:id", authMiddleware.requireUser, authMiddleware
         });
     });
 });
+
 
 /*
 eventosRouter.get('/detalle/:id', (req, res, next) => {
@@ -190,7 +191,7 @@ eventosRouter.post('/inscribir', authMiddleware.requireUser, (req, res, next) =>
     const { eventoId } = req.body;
     const usuarioId = req.session.currentUser.id;
 
-    // Verificar si el usuario ya está inscrito
+    //Verificar si el usuario está inscrito
     daoI.getInscripcion(usuarioId, eventoId, (err, inscrito) => {
         if (err) {
             next(err);
@@ -207,16 +208,13 @@ eventosRouter.post('/inscribir', authMiddleware.requireUser, (req, res, next) =>
                 if (err) {
                     next(err);
                 }
-
-                // Crear la notificación de confirmación de inscripción
                 const mensaje = `Has sido inscrito exitosamente en el evento con ID ${eventoId}.`;
                 const tipo = "CONFIRMACION_INSCRIPCION";
                 const fecha = new Date();
-                const query = "INSERT INTO Notificaciones (id_usuario, tipo, info, fecha, leida) VALUES (?, ?, ?, ?, false)";
-
-                db.query(query, [usuarioId, tipo, eventoId, fecha], (err) => {
+                
+                daoN.insertarNotificacion(usuarioId, tipo, eventoId, fecha, false, (err, insertId) => {
                     if (err) {
-                        console.error("Error al insertar la notificación de inscripción:", err);
+                        console.error("Error al insertar la notificación de desinscripción:", err);
                     }
                 });
 
@@ -251,18 +249,14 @@ eventosRouter.post('/desinscribir', authMiddleware.requireUser, (req, res, next)
                 if (err) {
                     next(err);
                 }
-
                 const info = evento.id;
                 const tipo = "DESINSCRIPCION_EVENTO";
                 const fecha = new Date();
-                const query = "INSERT INTO Notificaciones (id_usuario, tipo, info, fecha, leida) VALUES (?, ?,?, ?, ?, false)";
-
-                db.query(query, [usuarioId, tipo, info, eventoId, fecha], (err) => {
+                daoN.insertarNotificacion(usuarioId, tipo, eventoId, fecha, false, (err, insertId) => {
                     if (err) {
                         console.error("Error al insertar la notificación de desinscripción:", err);
                     }
                 });
-
                 evento.inscrito = false;
                 res.render("partials/evento", { evento, usuario: req.session.currentUser });
             });
