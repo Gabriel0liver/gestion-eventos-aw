@@ -29,6 +29,9 @@ notificacionesRouter.get('/', authMiddleware.requireUser, (req, res) => {
                     return procesarExplusionInscripcion(info, fecha, leida, id);
                 case 'ASCENSO_LISTA_ESPERA':
                     return procesarAscensoListaEspera(info, fecha, leida, id);
+                case 'DESINSCRIPCION_EVENTO':
+                    return procesarDesinscripcion(info, fecha, leida, id);
+                    
                     default:
                     return {
                         mensaje: 'Notificación desconocida.',
@@ -41,11 +44,22 @@ notificacionesRouter.get('/', authMiddleware.requireUser, (req, res) => {
     });
 });
 
+function procesarDesinscripcion(info, fecha, leida, id) {
+    //TODO
+    return {
+        tipo: 'CANCELACION_EVENTO',
+        mensaje: `Te has desinscrito del evento con ID ${info}.`,
+        fecha,
+        leida,
+        id,
+    };
+}
+
 function procesarAscensoListaEspera(info, fecha, leida, id) {
     //TODO
     return {
         tipo: 'CANCELACION_EVENTO',
-        mensaje: `El evento con ID ${info} ha sido cancelado.`,
+        mensaje: `Has sido ascendido en la lista de espera del evento con ID ${info}.`,
         fecha,
         leida,
         id,
@@ -56,7 +70,7 @@ function procesarExplusionInscripcion(info, fecha, leida, id) {
     //TODO
     return {
         tipo: 'CANCELACION_EVENTO',
-        mensaje: `El evento con ID ${info} ha sido cancelado.`,
+        mensaje: `Has sido expulsado del evento con ID ${info}.`,
         fecha,
         leida,
         id,

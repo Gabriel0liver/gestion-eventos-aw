@@ -231,10 +231,9 @@ eventosRouter.post('/inscribir', authMiddleware.requireUser, (req, res, next) =>
 
 //Desinscribir
 eventosRouter.post('/desinscribir', authMiddleware.requireUser, (req, res, next) => {
-    const { eventoId  } = req.body;
+    const { eventoId } = req.body;
     const usuarioId = req.session.currentUser.id;
 
-    // Verificar si el usuario está inscrito
     daoI.getInscripcion(usuarioId, eventoId, (err, inscrito) => {
         if (err) {
             next(err);
@@ -248,17 +247,29 @@ eventosRouter.post('/desinscribir', authMiddleware.requireUser, (req, res, next)
             if (err) {
                 next(err);
             }
-            // Eliminar la inscripción
             daoI.desinscribirUsuario(usuarioId, eventoId, (err, result) => {
                 if (err) {
                     next(err);
                 }
+
+                const info = evento.id;
+                const tipo = "DESINSCRIPCION_EVENTO";
+                const fecha = new Date();
+                const query = "INSERT INTO Notificaciones (id_usuario, tipo, info, fecha, leida) VALUES (?, ?,?, ?, ?, false)";
+
+                db.query(query, [usuarioId, tipo, info, eventoId, fecha], (err) => {
+                    if (err) {
+                        console.error("Error al insertar la notificación de desinscripción:", err);
+                    }
+                });
+
                 evento.inscrito = false;
                 res.render("partials/evento", { evento, usuario: req.session.currentUser });
             });
         });
     });
 });
+
 
 //Mostrar las inscripciones de un usuario
 eventosRouter.get("/mis-inscripciones", authMiddleware.requireUser, (req, res, next) => {
