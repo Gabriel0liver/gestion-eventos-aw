@@ -133,4 +133,35 @@ userRouter.get("/perfil", authMiddleware.requireUser, (req, res) => {
     });
 });
 
+userRouter.post("/editar", authMiddleware.requireUser, (req, res, next) => {
+    const usuarioId = req.session.currentUser.id;
+    const datos = {
+        id: usuarioId,
+        nombre: req.body.nombre,
+        telefono: req.body.telefono,
+        facultad: req.body.facultad
+    }
+
+    if (datos.telefono == "") {
+        datos.telefono = null;
+    }
+
+    daoU.updateUser(datos, (error, usuario) => {
+        if (error) {
+            next(error);
+        }
+        const usuarionuevo = req.session.currentUser;
+        usuarionuevo.nombre = datos.nombre;
+        usuarionuevo.telefono = datos.telefono;
+        usuarionuevo.facultad = datos.facultad;
+        req.session.currentUser = usuarionuevo;
+        daoI.getHistorialEventosUsuario(usuarioId, (error, historial) => {
+            if (error) {
+                return next(error);
+            }
+            res.render("perfil", { user: req.session.currentUser, historial: historial });
+        });
+    });
+});
+
 module.exports = userRouter;

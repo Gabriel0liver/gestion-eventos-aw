@@ -45,8 +45,8 @@ class UserDAO {
 
     //Edita informacion de un usuario
     updateUser(user, callback){
-        db.query("UPDATE usuarios SET nombre = ?, correo = ?, contrasena = ?, facultad = ?, rol = ? WHERE Id = ?",
-        [user.nombre,user.correo,user.contrasena,user.facultad,user.rol,user.Id], (e, rows) =>{
+        db.query("UPDATE usuarios SET nombre = ?, facultad = ? ,telefono = ? WHERE id = ?",
+        [user.nombre,user.facultad,user.telefono,user.id], (e, rows) =>{
             if (e) callback(new Error(e));
             else callback(null,user);
         });
