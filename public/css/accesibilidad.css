@@ -1,50 +1,30 @@
 
-/* Estilos para el modo daltonismo */
-body.daltonismo {
+
+body.daltonismo nav {
     filter: grayscale(100%);
 }
 
+
 body.daltonismo .card {
-    border-color: #000;
+    filter: grayscale(100%);
 }
 
-body.daltonismo .btn {
-    background-color: #000;
-    color: #fff;
-}
-
-body.daltonismo .btn-inscribirse {
-    background-color: #000;
-    color: #fff;
+body.daltonismo .container {
+    filter: grayscale(100%);
 }
 
 /* Estilos para el modo alto contraste */
-body.alto-contraste {
-    background-color: #000;
-    color: #fff;
+body.alto-contraste nav {
+    filter: contrast(130%);
 }
+
 
 body.alto-contraste .card {
-    background-color: #000;
-    border-color: #fff;
-    color: #fff;
+    filter: contrast(130%);
 }
 
-body.alto-contraste .btn {
-    background-color: #fff;
-    color: #000;
+body.alto-contraste .container {
+    filter: contrast(130%);
 }
 
-body.alto-contraste .btn-inscribirse {
-    background-color: #fff;
-    color: #000;
-}
 
-body.alto-contraste a {
-    color: #00f;
-}
-
-body.alto-contraste .navbar {
-    background-color: #000;
-    border-color: #fff;
-}
