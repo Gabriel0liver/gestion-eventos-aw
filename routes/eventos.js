@@ -381,5 +381,6 @@ eventosRouter.post('/eliminar-inscripcion', authMiddleware.requireUser, (req, re
         res.json({ success: true });
     });
 });
-
+});
+});
 module.exports= eventosRouter;
