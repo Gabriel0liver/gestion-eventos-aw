@@ -86,25 +86,21 @@ eventosRouter.get('/mis-eventos', authMiddleware.requireUser, (req, res, next) =
     });
 });
 
-
 eventosRouter.delete("/eliminar/:id", authMiddleware.requireUser, authMiddleware.esOrganizador, (req, res, next) => {
     const eventoId = req.params.id;
-    
+
     daoE.getInscripcionesPorEvento(eventoId, (err, inscripciones) => {
         if (err) {
             return next(err);
         }
 
-        //Si da tiempo pasar a un daoNotificaciones
-        //Crear notificación
+        //Crear notificaciones para los usuarios inscritos
         inscripciones.forEach(inscripcion => {
             const usuarioId = inscripcion.id_usuario;
-            //TODO pasar info mas completa
-            const info = eventoId;
             const tipo = "CANCELACION_EVENTO";
             const fecha = new Date();
             const query = "INSERT INTO Notificaciones (id_usuario, tipo, info, fecha, leida) VALUES (?, ?, ?, ?, false)";
-            
+
             db.query(query, [usuarioId, tipo, eventoId, fecha], (err) => {
                 if (err) {
                     console.error("Error al insertar la notificación de cancelación:", err);
@@ -119,15 +115,10 @@ eventosRouter.delete("/eliminar/:id", authMiddleware.requireUser, authMiddleware
             }
             res.status(200).send("Evento eliminado con éxito.");
         });
-    daoE.deleteEventoById(eventoId, req.session.currentUser.id, (error) => {
-        if (error) {
-            console.error('Error al eliminar evento:', error);
-            return res.status(500).send("Error al eliminar el evento.");
-        }
-        res.status(200).send("Evento eliminado con éxito.");
     });
 });
 
+/*
 eventosRouter.get('/detalle/:id', (req, res, next) => {
     const eventoId = req.params.id;
     daoE.getEventoById(eventoId, (error, evento) => {
@@ -137,16 +128,7 @@ eventosRouter.get('/detalle/:id', (req, res, next) => {
         res.render('partials/evento', { evento, usuario: req.session.currentUser });
     });
 });
-
-eventosRouter.get('/detalle/:id', (req, res, next) => {
-    const eventoId = req.params.id;
-    daoE.getEventoById(eventoId, (error, evento) => {
-        if (error) {
-            return next(error);
-        }
-        res.render('partials/evento', { evento, usuario: req.session.currentUser });
-    });
-});
+*/
 
 eventosRouter.get('/detalle/:id', authMiddleware.requireUser, (req, res, next) => {
     const eventoId = req.params.id;
@@ -196,6 +178,7 @@ eventosRouter.post("/anyadir", fotos.single("foto"), async (req, res, next) => {
         next(error);
     }
 });
+
 
 
 
@@ -368,8 +351,6 @@ eventosRouter.post('/eliminar-inscripcion', authMiddleware.requireUser, (req, re
     console.log(req.body);
     const { inscripcionId } = req.body;
 
-    console.log(inscripcionId);
-
     daoI.eliminarInscripcion(inscripcionId, (err) => {
         if (err) {
             return next(err);
@@ -442,7 +423,6 @@ eventosRouter.post('/eliminar-inscripcion', authMiddleware.requireUser, (req, re
         }
         res.json({ success: true });
     });
-});
 });
 
 module.exports= eventosRouter;
