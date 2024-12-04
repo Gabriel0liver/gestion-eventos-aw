@@ -108,6 +108,7 @@
                     },
                     success: function (response) {
                         $(`#evento-${eventoId}`).html(response);
+                        alert("Te has inscrito del evento exitosamente.");
                     },
                     error: function () {
                         alert('Error al inscribirse');
@@ -129,6 +130,7 @@
                     },
                     success: function (response) {
                         $(`#evento-${eventoId}`).html(response);
+                        alert("Te has desinscrito del evento exitosamente.");
                     },
                     error: function () {
                         alert('Error al desinscribirse');
@@ -136,6 +138,8 @@
                 });
             });
         });
+
+
 
 
     </script>

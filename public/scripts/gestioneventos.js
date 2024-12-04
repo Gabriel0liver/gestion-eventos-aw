@@ -22,7 +22,7 @@ $(document).ready(function () {
                                 <th>Acciones</th>
                             </tr>
                         </thead>
-                        <tbody>c`;
+                        <tbody>`;
                 data.eventos.forEach(evento => {
                     tabla += 
                         `<tr data-id="${evento.id}">

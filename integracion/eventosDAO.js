@@ -60,16 +60,21 @@ class EventosDAO {
     }
     
     deleteEventoById(id, id_organizador, callback) {
+       
+    
         db.query("DELETE FROM eventos WHERE id = ? AND id_organizador = ?", [id, id_organizador], (e) => {
-            if (e) callback(new Error(e));
-            else{
-                db.query("DELETE FROM inscripciones WHERE id_evento = ?", [id], (e) => {
-                    if (e) callback(new Error(e));
-                    else callback(null);
-                });
+            if (e) {
+                return callback(new Error(`Error al eliminar el evento: ${e.message}`));
             }
+            db.query("DELETE FROM inscripciones WHERE id_evento = ?", [id], (e) => {
+                if (e) {
+                    return callback(new Error(`Error al eliminar inscripciones: ${e.message}`));
+                }
+                callback(null); 
+            });
         });
     }
+    
 
     editarEvento(evento, id_organizador, callback) {
         return new Promise((resolve, reject) => {
@@ -177,6 +182,18 @@ class EventosDAO {
             callback(null, eventosConInscripcion);
         });
     }
+
+    getInscripcionesPorEvento(eventoId, callback) {
+        const sql = 'SELECT * FROM inscripciones WHERE id_evento = ?';
+        db.query(sql, [eventoId], (error, resultados) => {
+            if (error) {
+                console.error("Error al obtener inscripciones por evento:", error);
+                return callback(error, null);
+            }
+            callback(null, resultados);
+        });
+    }
+
 }
 
 module.exports = EventosDAO;
