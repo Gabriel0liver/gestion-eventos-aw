@@ -1,0 +1,27 @@
+
+<div class="card">
+    <!-- Imagen del evento -->
+    <img src="<%= evento.foto ? '/fotos/' + evento.foto : '/fotos/default.jpg' %>" class="card-img-top" alt="Imagen del evento">
+    <div class="card-body">
+        <h5 class="card-title"><%= evento.titulo %></h5>
+        <p class="card-text"><%= evento.descripcion %></p>
+        <p><strong>Fecha:</strong> <%= evento.fecha %></p>
+        <p><strong>Ubicación:</strong> <%= evento.ubicacion %></p>
+        <p><strong>Tipo:</strong> <%= evento.tipo %></p>
+        
+        <% if (usuario) { %>
+            <% if (evento.inscrito) { %>
+                <% if (evento.estado == "inscrito") { %>
+                    <p class="text-success">Inscrito en este evento.</p>
+                <% } else { %>
+                    <p class="text-danger">Estás en lista de espera.</p>
+                <% } %>
+                <button class="btn btn-danger btn-desinscribirse" data-id="<%= evento.id %>" data-usuario="<%= usuario.id %>">Desinscribirse</button>
+            <% } else { %>
+                <button class="btn btn-success btn-inscribirse" data-id="<%= evento.id %>" data-usuario="<%= usuario.id %>">Inscribirse</button>
+            <% } %>
+        <% } else { %>
+            <p class="text-muted">Inicia sesión para interactuar</p>
+        <% } %>
+    </div>
+</div>

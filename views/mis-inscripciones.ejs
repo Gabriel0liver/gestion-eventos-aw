@@ -20,19 +20,8 @@
                 <p class="text-center">No tienes inscripciones activas.</p>
             <% } else { %>
                 <% eventos.forEach(evento => { %>
-                    <div class="col-md-4 mb-3">
-                        <div class="card">
-                            <img src="<%= evento.foto ? '/fotos/' + evento.foto : '/fotos/default.jpg' %>" class="card-img-top" alt="Imagen del evento">
-                            <div class="card-body">
-                                <h5 class="card-title"><%= evento.titulo %></h5>
-                                <p class="card-text"><%= evento.descripcion %></p>
-                                <p><strong>Fecha:</strong> <%= evento.fecha %></p>
-                                <p><strong>Ubicación:</strong> <%= evento.ubicacion %></p>
-                                <p><strong>Tipo:</strong> <%= evento.tipo %></p>
-
-                                <button class="btn btn-danger btn-desinscribirse" data-id="<%= evento.id %>" data-inscripcion="<%= evento.inscripcionId %>">Desinscribirse</button>
-                            </div>
-                        </div>
+                    <div class="col-md-4 mb-3" id="evento-<%= evento.id %>">
+                        <%- include('./partials/evento', { evento }) %>
                     </div>
                 <% }); %>
             <% } %>
@@ -51,7 +40,7 @@
                     type: 'POST',
                     data: { eventoId: eventoId },
                     success: function (response) {
-                        location.reload();
+                        $(`#evento-${eventoId}`).html(response);
                     },
                     error: function (error) {
                         alert('Error al desinscribirse');

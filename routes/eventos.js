@@ -207,7 +207,9 @@ eventosRouter.post('/inscribir', authMiddleware.requireUser, (req, res, next) =>
                         if (err) {
                             next(err);
                         }
-                        res.json(inscripcion);
+                        evento.inscrito = true;
+                        evento.estado = 'lista_espera';
+                        res.render("partials/evento", { evento, usuario: req.session.currentUser });
                     });
                     return;
                 }
@@ -215,7 +217,9 @@ eventosRouter.post('/inscribir', authMiddleware.requireUser, (req, res, next) =>
                     if (err) {
                         next(err);
                     }
-                    res.json(inscripcion);
+                    evento.inscrito = true;
+                    evento.estado = 'inscrito';
+                    res.render("partials/evento", { evento, usuario: req.session.currentUser });
                 });
             } );
         });
@@ -227,8 +231,6 @@ eventosRouter.post('/desinscribir', authMiddleware.requireUser, (req, res, next)
     const { eventoId  } = req.body;
     const usuarioId = req.session.currentUser.id;
 
-    console.log(usuarioId, eventoId);
-
     // Verificar si el usuario está inscrito
     daoI.getInscripcion(usuarioId, eventoId, (err, inscrito) => {
         if (err) {
@@ -239,12 +241,18 @@ eventosRouter.post('/desinscribir', authMiddleware.requireUser, (req, res, next)
             return res.status(400).json({ error: 'No estás inscrito en este evento' });
         }
 
-        // Eliminar la inscripción
-        daoI.desinscribirUsuario(usuarioId, eventoId, (err, result) => {
+        daoE.getEventoById(eventoId, (err, evento) => {
             if (err) {
                 next(err);
             }
-            res.json(result);
+            // Eliminar la inscripción
+            daoI.desinscribirUsuario(usuarioId, eventoId, (err, result) => {
+                if (err) {
+                    next(err);
+                }
+                evento.inscrito = false;
+                res.render("partials/evento", { evento, usuario: req.session.currentUser });
+            });
         });
     });
 });
@@ -267,6 +275,8 @@ eventosRouter.get("/mis-inscripciones", authMiddleware.requireUser, (req, res, n
                         reject(err);
                     }
                     evento.inscripcionId = inscripcion.id;
+                    evento.inscrito = true;
+                    evento.estado = inscripcion.estado;
                     resolve(evento);
                 });
             });

@@ -83,7 +83,6 @@
                         eventType: eventType
                     },
                     success: function (response) {
-                        console.log(response);
                         $(".eventos").html(response);
                     },
                     error: function () {
@@ -104,7 +103,7 @@
                         usuarioId: usuarioId
                     },
                     success: function (response) {
-                        location.reload();
+                        $(`#evento-${eventoId}`).html(response);
                     },
                     error: function () {
                         alert('Error al inscribirse');
@@ -125,7 +124,7 @@
                         usuarioId: usuarioId
                     },
                     success: function (response) {
-                        location.reload();
+                        $(`#evento-${eventoId}`).html(response);
                     },
                     error: function () {
                         alert('Error al desinscribirse');
