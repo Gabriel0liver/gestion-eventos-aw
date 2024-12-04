@@ -243,7 +243,7 @@ eventosRouter.post('/desinscribir', authMiddleware.requireUser, (req, res, next)
                 const info = evento.id;
                 const tipo = "DESINSCRIPCION_EVENTO";
                 const fecha = new Date();
-                const query = "INSERT INTO Notificaciones (id_usuario, tipo, info, fecha, leida) VALUES (?, ?,?, ?, ?, false)";
+                const query = "INSERT INTO notificaciones (id_usuario, tipo, info, fecha, leida) VALUES (?, ?,?, ?, ?, false)";
 
                 db.query(query, [usuarioId, tipo, info, eventoId, fecha], (err) => {
                     if (err) {
