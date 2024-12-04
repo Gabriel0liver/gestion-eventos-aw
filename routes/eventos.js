@@ -73,51 +73,20 @@ eventosRouter.get("/gestion_eventos", authMiddleware.requireUser, authMiddleware
 });
 
 eventosRouter.get('/mis-eventos', authMiddleware.requireUser, (req, res, next) => {
-    daoE.getEventosOrganizador(1, (error, eventos) => {
+
+    daoE.getEventosOrganizador(req.session.currentUser.id, (error, eventos) => {
         if (error) {
             console.error("Error fetching eventos:", error);
             return next(error);
         }
-
-        if (!eventos || eventos.length === 0) {
-            console.warn("No se encontraron eventos para el organizador.");
-            return res.status(404).json({ mensaje: "No se encontraron eventos." });
-        }
-        res.json({ eventos });
+        res.status(200).json({ eventos });
     });
 });
-
-/*
-eventosRouter.post("/crear", authMiddleware.requireUser, (req, res) => {
-    const { titulo, descripcion, fecha, hora, ubicacion, capacidad_maxima, tipo } = req.body;
-
-    const id_organizador = req.session.currentUser.id;
-
-    daoE.verifyOrganizador(id_organizador, (error, esOrganizador) => {
-        if (error) {
-            console.error(error);
-            return res.status(500).send("Error al crear el evento.");
-        }   
-        if (!esOrganizador) {
-            return res.status(403).send("No tienes permisos para crear eventos.");
-        }else{
-            const evento = { titulo, descripcion, fecha, hora, ubicacion, capacidad_maxima, tipo, id_organizador };
-            daoE.insertEvento(evento, (error, evento) => {
-                if (error) {
-                    next(error);
-                }
-                res.redirect("/eventos");
-            });
-        }
-    });
-});
-*/
-
 
 
 eventosRouter.delete("/eliminar/:id", authMiddleware.requireUser, authMiddleware.esOrganizador, (req, res, next) => {
     const eventoId = req.params.id;
-    daoE.deleteEventoById(eventoId, (error) => {
+    daoE.deleteEventoById(eventoId, req.session.currentUser.id, (error) => {
         if (error) {
             console.error('Error al eliminar evento:', error);
             return res.status(500).send("Error al eliminar el evento.");
@@ -147,7 +116,7 @@ eventosRouter.post("/editar/:id", authMiddleware.requireUser, authMiddleware.esO
     }
 
     try {
-        await daoE.editarEvento({ id, titulo, descripcion, fecha, hora, ubicacion, capacidad_maxima, tipo, foto });
+        await daoE.editarEvento({ id, titulo, descripcion, fecha, hora, ubicacion, capacidad_maxima, tipo, foto }, req.session.currentUser.id);
         res.json({ mensaje: "Evento actualizado correctamente" });
     } catch (error) {
         console.error("Error al editar evento:", error);

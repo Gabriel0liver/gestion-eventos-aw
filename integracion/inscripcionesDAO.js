@@ -71,6 +71,23 @@ class InscripcionesDAO {
             callback(null, rows);
         });
     }
+
+    getHistorialEventosUsuario(usuarioId, callback) {
+        const sql = `
+            SELECT e.titulo, e.fecha, i.estado
+            FROM inscripciones i
+            JOIN eventos e ON i.id_evento = e.id
+            WHERE i.id_usuario = ?
+            ORDER BY e.fecha DESC
+        `;
+        db.query(sql, [usuarioId], (err, rows) => {
+            if (err) {
+                console.error('Error en la consulta del historial de eventos:', err); 
+                return callback(err, null);
+            }
+            callback(null, rows);
+        });
+    }
 }
 
 module.exports = InscripcionesDAO;

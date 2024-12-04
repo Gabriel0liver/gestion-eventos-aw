@@ -50,14 +50,6 @@ class EventosDAO {
               
     }
 
-    deleteEvento(evento, callback){
-        db.query("DELETE FROM eventos WHERE Id = ?", [evento.Id], (e, rows) =>{
-            c.release()
-            if (e) callback(new Error(e));
-            else callback(null,evento);
-        });    
-    }
-
     getEventoById(id, callback) {
         db.query("SELECT * FROM eventos WHERE id = ?", [id], function(e, rows) {
             if (e) callback(new Error(e));
@@ -67,14 +59,14 @@ class EventosDAO {
         });
     }
     
-    deleteEventoById(id, callback) {
-        db.query("DELETE FROM eventos WHERE id = ?", [id], (e) => {
+    deleteEventoById(id, id_organizador, callback) {
+        db.query("DELETE FROM eventos WHERE id = ? AND id_organizador = ?", [id, id_organizador], (e) => {
             if (e) callback(new Error(e));
             else callback(null);
         });
     }
 
-    editarEvento(evento) {
+    editarEvento(evento, id_organizador, callback) {
         return new Promise((resolve, reject) => {
             const { id, titulo, descripcion, fecha, hora, ubicacion, capacidad_maxima, tipo, foto } = evento;
     
@@ -85,10 +77,10 @@ class EventosDAO {
             const sql = `
                 UPDATE eventos 
                 SET titulo = ?, descripcion = ?, fecha = ?, hora = ?, ubicacion = ?, capacidad_maxima = ?, tipo = ?, foto = COALESCE(?, foto) 
-                WHERE id = ?
+                WHERE id = ? AND id_organizador = ?
             `;
     
-            db.query(sql, [titulo, descripcion, fecha, hora, ubicacion, capacidad_maxima, tipo, foto, id], (err, results) => {
+            db.query(sql, [titulo, descripcion, fecha, hora, ubicacion, capacidad_maxima, tipo, foto, id, id_organizador], (err, results) => {
                 if (err) {
                     return reject(err);
                 }
