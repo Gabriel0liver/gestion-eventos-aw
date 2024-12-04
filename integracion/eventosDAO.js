@@ -62,7 +62,12 @@ class EventosDAO {
     deleteEventoById(id, id_organizador, callback) {
         db.query("DELETE FROM eventos WHERE id = ? AND id_organizador = ?", [id, id_organizador], (e) => {
             if (e) callback(new Error(e));
-            else callback(null);
+            else{
+                db.query("DELETE FROM inscripciones WHERE id_evento = ?", [id], (e) => {
+                    if (e) callback(new Error(e));
+                    else callback(null);
+                });
+            }
         });
     }
 
